@@ -39,7 +39,7 @@ middle-emulation {disabled,enabled}
 scroll-method {none,two-fingers,edge,on-button-down}
 scroll-button [number]
 dwt {disabled,enabled}
-scroll-factpr [number]
+scroll-factor [number]
 discrete-scroll-factor [number]
 ```
 
