@@ -1,0 +1,1 @@
+export LD_PRELOAD=@libdir@/@project_name@.so:$LD_PRELOAD
