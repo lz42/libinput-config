@@ -41,6 +41,7 @@ scroll-button [number]
 dwt {disabled,enabled}
 scroll-factor [number]
 discrete-scroll-factor [number]
+speed [number]
 ```
 
 ## How it works

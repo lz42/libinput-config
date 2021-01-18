@@ -25,7 +25,8 @@ struct libinput_config libinput_config = {
 	.dwt_configured = false,
 	
 	.scroll_factor = 1,
-	.discrete_scroll_factor = 1
+	.discrete_scroll_factor = 1,
+	.speed = 1
 };
 
 void libinput_config_init(void) {
@@ -160,6 +161,8 @@ void libinput_config_init(void) {
 			libinput_config.scroll_factor = atof(pair.value);
 		} else if (key("discrete-scroll-factor")) {
 			libinput_config.discrete_scroll_factor = atof(pair.value);
+		} else if (key("speed")) {
+			libinput_config.speed = atof(pair.value);
 		}
 		
 		free(pair.key);

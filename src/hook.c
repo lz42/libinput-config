@@ -21,6 +21,8 @@ typedef double (*get_axis_value_t)(
 	enum libinput_pointer_axis
 );
 
+typedef double (*get_dx_t)(struct libinput_event_pointer *);
+
 struct libinput *libinput_udev_create_context(
 	const struct libinput_interface *interface,
 	void *user_data,
@@ -82,4 +84,36 @@ double libinput_event_pointer_get_axis_value_discrete (
 	return
 		get_axis_value_discrete(event, axis) *
 		libinput_config.discrete_scroll_factor;
+}
+
+double libinput_event_pointer_get_dx(
+	struct libinput_event_pointer *event
+) {
+	get_dx_t get_dx = dlsym(RTLD_NEXT, "libinput_event_pointer_get_dx");
+	
+	return get_dx(event) * libinput_config.speed;
+}
+double libinput_event_pointer_get_dy(
+	struct libinput_event_pointer *event
+) {
+	get_dx_t get_dy = dlsym(RTLD_NEXT, "libinput_event_pointer_get_dy");
+	
+	return get_dy(event) * libinput_config.speed;
+}
+
+double libinput_event_pointer_get_dx_unaccelerated(
+	struct libinput_event_pointer *event
+) {
+	get_dx_t get_dx_unaccelerated =
+		dlsym(RTLD_NEXT, "libinput_event_pointer_get_dx_unaccelerated");
+	
+	return get_dx_unaccelerated(event) * libinput_config.speed;
+}
+double libinput_event_pointer_get_dy_unaccelerated(
+	struct libinput_event_pointer *event
+) {
+	get_dx_t get_dy_unaccelerated =
+		dlsym(RTLD_NEXT, "libinput_event_pointer_get_dy_unaccelerated");
+	
+	return get_dy_unaccelerated(event) * libinput_config.speed;
 }
