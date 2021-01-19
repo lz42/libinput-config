@@ -20,17 +20,19 @@ shared_library('input-config',
 libdir = get_option('prefix') / get_option('libdir')
 project_name = meson.project_name()
 
-meson.add_install_script('preload.sh', libdir, project_name)
-
-configure_file(
-	input: 'profile.sh.in',
-	output: 'libinput-config.sh',
-	
-	configuration: {
-		'libdir': libdir,
-		'project_name': project_name
-	},
-	
-	install: true,
-	install_dir: '/etc/profile.d'
-)
+if get_option('non_glibc')
+	configure_file(
+		input: 'profile.sh.in',
+		output: 'libinput-config.sh',
+		
+		configuration: {
+			'libdir': libdir,
+			'project_name': project_name
+		},
+		
+		install: true,
+		install_dir: '/etc/profile.d'
+	)
+else
+	meson.add_install_script('preload.sh', libdir, project_name)
+endif

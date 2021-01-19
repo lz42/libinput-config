@@ -1,0 +1,6 @@
+option('non_glibc',
+	type: 'boolean',
+	value: 'false',
+	
+	description: 'Enable non-GNU libc support'
+)

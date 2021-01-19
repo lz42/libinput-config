@@ -6,7 +6,7 @@ Wayland compositor doesn't have a certain config or has none.
 ```
 meson build
 cd build
-meson compile
+meson compile # -Dnon_glibc=true
 sudo meson install
 ```
 
@@ -40,8 +40,8 @@ The library wraps around libinput and hacks into the event loop to
 read the config and configure devices. Additional hackery is used to
 configure scrolling sensitivity and pointer speed. To do all of this,
 it uses the `/etc/ld.so.preload` file, which is modified by the
-install script. If your libc doesn't support `/etc/ld.so.preload`, an
-`LD_PRELOAD` fallback is used.
+install script. If non-GNU libc support is enabled, an `LD_PRELOAD`
+fallback is used instead.
 
 ## Inspiration
 
