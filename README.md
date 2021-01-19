@@ -48,8 +48,8 @@ speed [number]
 
 The library wraps around libinput and hacks into the event loop to
 read the config and configure devices. Additional hackery is used to
-configure scrolling sensitivity. To do all of this, it uses the
-`LD_PRELOAD` environment variable, which is modified by a
+configure scrolling sensitivity and pointer speed. To do all of this,
+it uses the `LD_PRELOAD` environment variable, which is modified by a
 `/etc/profile.d` script.
 
 ## Inspiration
