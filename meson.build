@@ -22,7 +22,7 @@ project_name = meson.project_name()
 
 if get_option('non_glibc')
 	configure_file(
-		input: 'profile.sh.in',
+		input: 'scripts/profile.sh.in',
 		output: 'libinput-config.sh',
 		
 		configuration: {
@@ -34,5 +34,5 @@ if get_option('non_glibc')
 		install_dir: '/etc/profile.d'
 	)
 else
-	meson.add_install_script('preload.sh', libdir, project_name)
+	meson.add_install_script('scripts/preload.sh', libdir, project_name)
 endif
