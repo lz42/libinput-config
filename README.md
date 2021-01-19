@@ -10,16 +10,6 @@ meson compile
 sudo meson install
 ```
 
-If you're using GNOME Shell, you might be affected by [this Fedora
-bug]. To work around it remove the capabilities from the shell's
-executable file.
-
-[this Fedora bug]: https://ask.fedoraproject.org/t/ld-library-path-is-not-set-by-bash-profile-anymore-after-upgrade-to-fedora-31/4247 "LD_LIBRARY_PATH is not set by .bash_profile anymore after upgrade to Fedora 31"
-
-```
-sudo setcap "" /usr/bin/gnome-shell
-```
-
 ## How to use
 
 The library reads the file `/etc/libinput.conf`, which consists of
@@ -49,8 +39,8 @@ speed [number]
 The library wraps around libinput and hacks into the event loop to
 read the config and configure devices. Additional hackery is used to
 configure scrolling sensitivity and pointer speed. To do all of this,
-it uses the `LD_PRELOAD` environment variable, which is modified by a
-`/etc/profile.d` script.
+it uses the `/etc/ld.so.preload` file, which is modified by the
+install script.
 
 ## Inspiration
 

@@ -17,15 +17,7 @@ shared_library('input-config',
 	install: true
 )
 
-configure_file(
-	input: 'profile.sh.in',
-	output: 'libinput-config.sh',
-	
-	configuration: {
-		'libdir': get_option('prefix') / get_option('libdir'),
-		'project_name': meson.project_name()
-	},
-	
-	install: true,
-	install_dir: '/etc/profile.d'
+meson.add_install_script('preload.sh',
+	get_option('prefix') / get_option('libdir'),
+	meson.project_name()
 )
