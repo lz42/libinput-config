@@ -16,22 +16,22 @@ The library reads the file `/etc/libinput.conf`, which consists of
 `key=value` entries. The following settings are implemented:
 
 ```
-tap {disabled,enabled}
-tap-button-map {lrm,lmr}
-drag {disabled,enabled}
-drag-lock {disabled,enabled}
-accel-speed [number]
-accel-profile {none,flat,adaptive}
-natural-scroll {disabled,enabled}
-left-handed {disabled,enabled}
-click-method {none,button-areas,clickfinger}
-middle-emulation {disabled,enabled}
-scroll-method {none,two-fingers,edge,on-button-down}
-scroll-button [number]
-dwt {disabled,enabled}
-scroll-factor [number]
-discrete-scroll-factor [number]
-speed [number]
+tap={disabled,enabled}
+tap-button-map={lrm,lmr}
+drag={disabled,enabled}
+drag-lock={disabled,enabled}
+accel-speed=[number]
+accel-profile={none,flat,adaptive}
+natural-scroll={disabled,enabled}
+left-handed={disabled,enabled}
+click-method={none,button-areas,clickfinger}
+middle-emulation={disabled,enabled}
+scroll-method={none,two-fingers,edge,on-button-down}
+scroll-button=[number]
+dwt={disabled,enabled}
+scroll-factor=[number]
+discrete-scroll-factor=[number]
+speed=[number]
 ```
 
 ## How it works
