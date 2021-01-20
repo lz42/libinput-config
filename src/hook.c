@@ -63,7 +63,7 @@ struct libinput_event *libinput_get_event(struct libinput *libinput) {
 	return event;
 }
 
-double libinput_event_pointer_get_axis_value (
+double libinput_event_pointer_get_axis_value(
 	struct libinput_event_pointer *event,
 	enum libinput_pointer_axis axis
 ) {
@@ -74,7 +74,7 @@ double libinput_event_pointer_get_axis_value (
 		get_axis_value(event, axis) *
 		libinput_config.scroll_factor;
 }
-double libinput_event_pointer_get_axis_value_discrete (
+double libinput_event_pointer_get_axis_value_discrete(
 	struct libinput_event_pointer *event,
 	enum libinput_pointer_axis axis
 ) {

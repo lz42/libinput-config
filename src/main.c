@@ -7,6 +7,11 @@
 #define key(a) cmp(pair.key, a)
 #define value(a) cmp(pair.value, a)
 
+#define print(...)\
+	fprintf(stderr, "libinput-config: ");\
+	fprintf(stderr, __VA_ARGS__);\
+	fprintf(stderr, "\n");\
+
 struct libinput_config libinput_config = {
 	.configured = false,
 	
@@ -30,7 +35,11 @@ struct libinput_config libinput_config = {
 };
 
 void libinput_config_init(void) {
+	print("initializing");
+	
 	if (libinput_config.configured) {
+		print("already initialized");
+		
 		return;
 	}
 	libinput_config.configured = true;
@@ -38,6 +47,8 @@ void libinput_config_init(void) {
 	FILE *file = fopen("/etc/libinput.conf", "r");
 	
 	if (file == NULL) {
+		print("couldn't read the config file");
+		
 		return;
 	}
 	
@@ -48,6 +59,8 @@ void libinput_config_init(void) {
 		if (pair.key == NULL || pair.value == NULL) {
 			break;
 		}
+		
+		print("option '%s' is '%s'", pair.key, pair.value);
 		
 		if (key("tap")) {
 			libinput_config.tap_configured = true;
@@ -168,9 +181,13 @@ void libinput_config_init(void) {
 		free(pair.key);
 		free(pair.value);
 	}
+	
+	print("initialized");
 }
 
 void libinput_config_device(struct libinput_device *device) {
+	print("configuring device '%s'", libinput_device_get_name(device));
+	
 	if (libinput_config.tap_configured) {
 		libinput_device_config_tap_set_enabled(
 			device,
