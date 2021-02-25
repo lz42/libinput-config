@@ -7,11 +7,6 @@
 #define key(a) cmp(pair.key, a)
 #define value(a) cmp(pair.value, a)
 
-#define print(...)\
-	fprintf(stderr, "libinput-config: ");\
-	fprintf(stderr, __VA_ARGS__);\
-	fprintf(stderr, "\n");\
-
 struct libinput_config libinput_config = {
 	.configured = false,
 	

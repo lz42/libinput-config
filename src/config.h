@@ -2,7 +2,13 @@
 #define CONFIG_H
 
 #include <libinput.h>
+#include <stdio.h>
 #include <stdbool.h>
+
+#define print(...)\
+	fprintf(stderr, "libinput-config: ");\
+	fprintf(stderr, __VA_ARGS__);\
+	fprintf(stderr, "\n");\
 
 struct libinput_config {
 	bool configured;

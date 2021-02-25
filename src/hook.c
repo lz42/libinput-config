@@ -70,6 +70,8 @@ double libinput_event_pointer_get_axis_value(
 	get_axis_value_t get_axis_value =
 		dlsym(RTLD_NEXT, "libinput_event_pointer_get_axis_value");
 	
+	print("scroll event: %lf", libinput_config.scroll_factor);
+	
 	return
 		get_axis_value(event, axis) *
 		libinput_config.scroll_factor;
@@ -80,6 +82,8 @@ double libinput_event_pointer_get_axis_value_discrete(
 ) {
 	get_axis_value_t get_axis_value_discrete =
 		dlsym(RTLD_NEXT, "libinput_event_pointer_get_axis_value_discrete");
+	
+	print("discrete scroll event: %lf", libinput_config.scroll_factor);
 	
 	return
 		get_axis_value_discrete(event, axis) *
