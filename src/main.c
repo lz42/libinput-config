@@ -1,3 +1,4 @@
+#include <locale.h>
 #include <string.h>
 
 #include "config.h"
@@ -43,6 +44,14 @@ void libinput_config_init(void) {
 		return;
 	}
 	libinput_config.configured = true;
+	
+	// We need to switch locales to correctly parse numbers
+	
+	locale_t
+		initial_locale = newlocale(LC_NUMERIC_MASK, "", NULL),
+		c_locale = newlocale(LC_NUMERIC_MASK, "C", NULL);
+	
+	uselocale(c_locale);
 	
 	FILE *file = fopen("/etc/libinput.conf", "r");
 	
@@ -181,6 +190,8 @@ void libinput_config_init(void) {
 		free(pair.key);
 		free(pair.value);
 	}
+	
+	uselocale(initial_locale);
 	
 	print("initialized");
 }
