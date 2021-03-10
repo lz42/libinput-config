@@ -45,14 +45,6 @@ void libinput_config_init(void) {
 	}
 	libinput_config.configured = true;
 	
-	// We need to switch locales to correctly parse numbers
-	
-	locale_t
-		initial_locale = newlocale(LC_NUMERIC_MASK, "", NULL),
-		c_locale = newlocale(LC_NUMERIC_MASK, "C", NULL);
-	
-	uselocale(c_locale);
-	
 	FILE *file = fopen("/etc/libinput.conf", "r");
 	
 	if (file == NULL) {
@@ -60,6 +52,14 @@ void libinput_config_init(void) {
 		
 		return;
 	}
+	
+	// We need to switch locales to correctly parse numbers
+	
+	locale_t
+		initial_locale = newlocale(LC_NUMERIC_MASK, "", NULL),
+		c_locale = newlocale(LC_NUMERIC_MASK, "C", NULL);
+	
+	uselocale(c_locale);
 	
 	while (true) {
 		struct libinput_keyfile_pair pair =
