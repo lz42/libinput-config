@@ -3,7 +3,7 @@
 
 #include "keyfile.h"
 
-char *libinput_string_slice(char *str, size_t start, size_t end) {
+static char *string_slice(char *str, size_t start, size_t end) {
 	size_t size = end - start;
 	
 	char *output = malloc(size * sizeof(char));
@@ -47,8 +47,8 @@ struct libinput_keyfile_pair libinput_keyfile_get_pair(FILE *file) {
 	size_t delim_pos = delim - line;
 	size_t end_pos = end - line;
 	
-	pair.key = libinput_string_slice(line, 0, delim_pos);
-	pair.value = libinput_string_slice(line, delim_pos + 1, end_pos);
+	pair.key = string_slice(line, 0, delim_pos);
+	pair.value = string_slice(line, delim_pos + 1, end_pos);
 	
 	free(line);
 	
