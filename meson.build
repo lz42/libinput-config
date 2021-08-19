@@ -11,7 +11,8 @@ shared_library('input-config',
 	
 	dependencies: [
 		cc.find_library('dl', required: false),
-		dependency('libinput')
+		dependency('libinput'),
+		dependency('libudev')
 	],
 	
 	install: true
