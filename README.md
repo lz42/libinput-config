@@ -3,6 +3,19 @@ Wayland compositor doesn't have a certain config or has none.
 
 ## How to build and install
 
+Before the install, make sure the following prerequisites are met:
+
+* You're running an X11 server or a Wayland compositor that uses
+  libinput for input handling. If it uses another library such as
+  Synaptics, libinput-config won't work.
+* You have the libinput header files installed. They usually come in a
+  package called something like `libinput-dev` or `libinput-devel`.
+* You have the Meson build system insalled.
+* You have written a working config file (see [How to use] for more
+  details).
+
+[How to use]: #how-to-use
+
 ```
 meson build
 cd build
@@ -10,10 +23,22 @@ meson compile # -Dnon_glibc=true
 sudo meson install
 ```
 
+If you're using an old Meson version, replace `meson compile` with
+`ninja` and `meson install` with `ninja install`.
+
+If you're using a C library that's not glibc, remove the `#` character
+on the third line.
+
 ## How to use
 
-The library reads the file `/etc/libinput.conf`, which consists of
-`key=value` entries. The following settings are implemented:
+In order for the library to work, you need to create a config file
+under `/etc/libinput.conf`. You only need to put the options you're
+going to use. For all left out options, the system defaults will be
+used. If you already configured an option in your compositor, the
+compositor will take the priority.
+
+The config file must consist of `key=value` entries. The following
+settings are implemented:
 
 ```
 tap={disabled,enabled}
