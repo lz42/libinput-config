@@ -2,6 +2,11 @@ project('libinput-config', 'c')
 
 cc = meson.get_compiler('c')
 
+deps = [
+	dependency('libinput'),
+	dependency('libudev')
+]
+
 shared_library('input-config',
 	[
 		'src/hook.c',
@@ -10,10 +15,10 @@ shared_library('input-config',
 	],
 	
 	dependencies: [
-		cc.find_library('dl', required: false),
-		dependency('libinput'),
-		dependency('libudev')
+		cc.find_library('dl', required: false)
 	],
+	
+	link_args: '-Wl,--unresolved-symbols=ignore-all',
 	
 	install: true
 )
