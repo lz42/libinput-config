@@ -59,6 +59,22 @@ discrete-scroll-factor=[number]
 speed=[number]
 ```
 
+## How to uninstall
+
+```
+cd build
+sudo meson compile pre-uninstall
+sudo meson --internal uninstall
+```
+
+Or if you're using an old Meson version:
+
+```
+cd build
+sudo ninja pre-uninstall
+sudo ninja uninstall
+``
+
 ## How it works
 
 The library wraps around libinput and hacks into the event loop to

@@ -41,4 +41,8 @@ if get_option('non_glibc')
 	)
 else
 	meson.add_install_script('scripts/preload.sh', libdir, project_name)
+	
+	run_target('pre-uninstall',
+		command: ['scripts/unpreload.sh', libdir, project_name]
+	)
 endif
