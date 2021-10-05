@@ -73,7 +73,7 @@ Or if you're using an old Meson version:
 cd build
 sudo ninja pre-uninstall
 sudo ninja uninstall
-``
+```
 
 ## How it works
 
