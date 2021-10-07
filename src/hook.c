@@ -86,6 +86,29 @@ double libinput_event_pointer_get_axis_value_discrete(
 		libinput_config.discrete_scroll_factor;
 }
 
+double libinput_event_pointer_get_scroll_value(
+	struct libinput_event_pointer *event,
+	enum libinput_pointer_axis axis
+) {
+	get_axis_value_t get_scroll_value =
+		dlsym(RTLD_NEXT, "libinput_event_pointer_get_scroll_value");
+	
+	return
+		get_scroll_value(event, axis) *
+		libinput_config.scroll_factor;
+}
+double libinput_event_pointer_get_scroll_value_v120(
+	struct libinput_event_pointer *event,
+	enum libinput_pointer_axis axis
+) {
+	get_axis_value_t get_scroll_value_v120 =
+		dlsym(RTLD_NEXT, "libinput_event_pointer_get_scroll_value_v120");
+	
+	return
+		get_scroll_value_v120(event, axis) *
+		libinput_config.discrete_scroll_factor;
+}
+
 double libinput_event_pointer_get_dx(
 	struct libinput_event_pointer *event
 ) {
