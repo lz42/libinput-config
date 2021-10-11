@@ -17,17 +17,23 @@ Before the install, make sure the following prerequisites are met:
 [How to use]: #how-to-use
 
 ```
-meson build
+meson build # -Dnon_glibc=true
 cd build
-meson compile # -Dnon_glibc=true
+meson compile
 sudo meson install
 ```
 
-If you're using an old Meson version, replace `meson compile` with
-`ninja` and `meson install` with `ninja install`.
+Or if you're using an old Meson version:
+
+```
+meson build # -Dnon_glibc=true
+cd build
+ninja
+sudo ninja install
+```
 
 If you're using a C library that's not glibc, remove the `#` character
-on the third line.
+on the first line.
 
 ## How to use
 
