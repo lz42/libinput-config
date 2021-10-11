@@ -35,6 +35,9 @@ sudo ninja install
 If you're using a C library that's not glibc, remove the `#` character
 on the first line.
 
+After you compiled and installed the library, you need to relogin or
+reboot in order for the effect to take place.
+
 ## How to use
 
 In order for the library to work, you need to create a config file
