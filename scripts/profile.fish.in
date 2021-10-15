@@ -1,0 +1,3 @@
+if status is-login
+	set --export --path LD_PRELOAD @libdir@/@project_name@.so $LD_PRELOAD
+end

@@ -36,6 +36,19 @@ if get_option('non_glibc')
 		install: true,
 		install_dir: '/etc/profile.d'
 	)
+	
+	configure_file(
+		input: 'scripts/profile.fish.in',
+		output: 'libinput-config.fish',
+		
+		configuration: {
+			'libdir': libdir,
+			'project_name': project_name
+		},
+		
+		install: true,
+		install_dir: '/etc/fish/conf.d'
+	)
 else
 	meson.add_install_script('scripts/preload.sh', libdir, project_name)
 	
