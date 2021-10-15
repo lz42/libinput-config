@@ -49,6 +49,8 @@ if get_option('non_glibc')
 		install: true,
 		install_dir: '/etc/fish/conf.d'
 	)
+	
+	run_target('pre-uninstall', command: ['/bin/true'])
 else
 	meson.add_install_script('scripts/preload.sh', libdir, project_name)
 	
