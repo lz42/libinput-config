@@ -17,23 +17,15 @@ Before the install, make sure the following prerequisites are met:
 [How to use]: #how-to-use
 
 ```
-meson build # -Dnon_glibc=true
+meson build
 cd build
-meson compile
-sudo meson install
-```
-
-Or if you're using an old Meson version:
-
-```
-meson build # -Dnon_glibc=true
-cd build
+# meson configure -Dnon_glibc=true
 ninja
 sudo ninja install
 ```
 
-If you're using a C library that's not glibc, remove the `#` character
-on the first line.
+If you're using a C library that's not glibc, uncomment the third
+line.
 
 After you compiled and installed the library, you need to relogin or
 reboot in order for the effect to take place.
@@ -72,16 +64,7 @@ speed=[number]
 
 ```
 cd build
-sudo meson compile pre-uninstall
-sudo meson --internal uninstall
-```
-
-Or if you're using an old Meson version:
-
-```
-cd build
-sudo ninja pre-uninstall
-sudo ninja uninstall
+sudo ninja pre-uninstall uninstall
 ```
 
 ## How it works
