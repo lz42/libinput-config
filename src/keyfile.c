@@ -29,6 +29,9 @@ struct libinput_keyfile_pair libinput_keyfile_get_pair(FILE *file) {
 	size_t size = 0;
 	
 	do {
+		free(line);
+		line = NULL;
+		
 		if (getline(&line, &size, file) < 0) {
 			return pair;
 		}
@@ -37,6 +40,8 @@ struct libinput_keyfile_pair libinput_keyfile_get_pair(FILE *file) {
 	char *delim = strchr(line, '=');
 	
 	if (delim == NULL) {
+		free(line);
+		
 		return pair;
 	}
 	
