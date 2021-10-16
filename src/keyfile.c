@@ -39,7 +39,7 @@ struct libinput_keyfile_pair libinput_keyfile_get_pair(FILE *file) {
 		}
 		
 		delim = strchr(line, '=');
-	} while (line[0] == '\n' || delim == NULL);
+	} while (delim == NULL);
 	
 	char *end = strchr(line, '\n');
 	
