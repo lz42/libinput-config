@@ -26,10 +26,10 @@ sudo ninja install
 ```
 
 If you're using a C library that's not glibc, uncomment the third
-line.
+line. (#12)
 
 If you're using Snap and seeing error messages when launching apps,
-uncomment the fourth line.
+uncomment the fourth line. (#13)
 
 After you compiled and installed the library, you need to relogin or
 reboot in order for the effect to take place.
