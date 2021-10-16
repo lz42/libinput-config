@@ -28,6 +28,8 @@ struct libinput_keyfile_pair libinput_keyfile_get_pair(FILE *file) {
 	char *line = NULL;
 	size_t size = 0;
 	
+	char *delim = NULL;
+	
 	do {
 		free(line);
 		line = NULL;
@@ -35,15 +37,9 @@ struct libinput_keyfile_pair libinput_keyfile_get_pair(FILE *file) {
 		if (getline(&line, &size, file) < 0) {
 			return pair;
 		}
-	} while (line[0] == '\n');
-	
-	char *delim = strchr(line, '=');
-	
-	if (delim == NULL) {
-		free(line);
 		
-		return pair;
-	}
+		delim = strchr(line, '=');
+	} while (line[0] == '\n' || delim == NULL);
 	
 	char *end = strchr(line, '\n');
 	
