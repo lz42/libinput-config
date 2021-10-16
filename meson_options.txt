@@ -4,3 +4,9 @@ option('non_glibc',
 	
 	description: 'Enable non-GNU libc support'
 )
+option('shitty_sandboxing',
+	type: 'boolean',
+	value: 'false',
+	
+	description: 'Enable the workaround for shitty Snap sandboxing'
+)

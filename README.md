@@ -20,12 +20,16 @@ Before the install, make sure the following prerequisites are met:
 meson build
 cd build
 # meson configure -Dnon_glibc=true
+# meson configure -Dshitty_sandboxing=true
 ninja
 sudo ninja install
 ```
 
 If you're using a C library that's not glibc, uncomment the third
 line.
+
+If you're using Snap and seeing error messages when launching apps,
+uncomment the fourth line.
 
 After you compiled and installed the library, you need to relogin or
 reboot in order for the effect to take place.
