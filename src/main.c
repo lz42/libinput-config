@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <locale.h>
 #include <string.h>
 
@@ -37,6 +38,18 @@ struct libinput_config libinput_config = {
 	.discrete_scroll_factor = 1,
 	.speed = 1
 };
+
+static bool parse_number(const char *string, double *number) {
+	char *dummy = NULL;
+	
+	*number = strtod(string, &dummy);
+	
+	if (dummy[0] != '\0' || errno == EINVAL || errno == ERANGE) {
+		return false;
+	}
+	
+	return true;
+}
 
 void libinput_config_init(void) {
 	print("initializing");
@@ -125,7 +138,16 @@ void libinput_config_init(void) {
 		} else if (key("accel-speed")) {
 			libinput_config.accel_speed_configured = true;
 			
-			libinput_config.accel_speed = atof(pair.value);
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.accel_speed
+			);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.accel_speed_configured = false;
+			}
 		} else if (key("accel-profile")) {
 			libinput_config.accel_profile_configured = true;
 			
@@ -209,10 +231,16 @@ void libinput_config_init(void) {
 		} else if (key("scroll-button")) {
 			libinput_config.scroll_button_configured = true;
 			
-			unsigned long int val = strtoul(pair.value, NULL, 0);
+			double val = 0;
 			
-			if (val <= UINT32_MAX) {
-				libinput_config.scroll_button = (uint32_t)val;
+			bool success = parse_number(pair.value, &val);
+			
+			if (!success || val > UINT32_MAX || val < 0) {
+				invalid_value();
+				
+				libinput_config.scroll_button_configured = false;
+			} else {
+				libinput_config.scroll_button = (uint32_t) val;
 			}
 		} else if (key("dwt")) {
 			libinput_config.dwt_configured = true;
@@ -227,11 +255,35 @@ void libinput_config_init(void) {
 				libinput_config.dwt_configured = false;
 			}
 		} else if (key("scroll-factor")) {
-			libinput_config.scroll_factor = atof(pair.value);
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.scroll_factor
+			);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.scroll_factor = 1;
+			}
 		} else if (key("discrete-scroll-factor")) {
-			libinput_config.discrete_scroll_factor = atof(pair.value);
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.discrete_scroll_factor
+			);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.discrete_scroll_factor = 1;
+			}
 		} else if (key("speed")) {
-			libinput_config.speed = atof(pair.value);
+			bool success = parse_number(pair.value, &libinput_config.speed);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.speed = 1;
+			}
 		} else {
 			invalid_key();
 		}
