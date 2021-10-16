@@ -13,6 +13,9 @@
 	fprintf(stderr, __VA_ARGS__);\
 	fprintf(stderr, "\n");\
 
+#define invalid_key() print("warning: invalid setting key")
+#define invalid_value() print("warning: invalid setting value")
+
 struct libinput_config libinput_config = {
 	.configured = false,
 	
@@ -78,6 +81,10 @@ void libinput_config_init(void) {
 				libinput_config.tap = LIBINPUT_CONFIG_TAP_DISABLED;
 			} else if (value("enabled")) {
 				libinput_config.tap = LIBINPUT_CONFIG_TAP_ENABLED;
+			} else {
+				invalid_value();
+				
+				libinput_config.tap_configured = false;
 			}
 		} else if (key("tap-button-map")) {
 			libinput_config.tap_button_map_configured = true;
@@ -86,6 +93,10 @@ void libinput_config_init(void) {
 				libinput_config.tap_button_map = LIBINPUT_CONFIG_TAP_MAP_LRM;
 			} else if (value("lmr")) {
 				libinput_config.tap_button_map = LIBINPUT_CONFIG_TAP_MAP_LMR;
+			} else {
+				invalid_value();
+				
+				libinput_config.tap_button_map_configured = false;
 			}
 		} else if (key("drag")) {
 			libinput_config.drag_configured = true;
@@ -94,6 +105,10 @@ void libinput_config_init(void) {
 				libinput_config.drag = LIBINPUT_CONFIG_DRAG_DISABLED;
 			} else if (value("enabled")) {
 				libinput_config.drag = LIBINPUT_CONFIG_DRAG_ENABLED;
+			} else {
+				invalid_value();
+				
+				libinput_config.drag_configured = false;
 			}
 		} else if (key("drag-lock")) {
 			libinput_config.drag_lock_configured = true;
@@ -102,6 +117,10 @@ void libinput_config_init(void) {
 				libinput_config.drag_lock = LIBINPUT_CONFIG_DRAG_LOCK_DISABLED;
 			} else if (value("enabled")) {
 				libinput_config.drag_lock = LIBINPUT_CONFIG_DRAG_LOCK_ENABLED;
+			} else {
+				invalid_value();
+				
+				libinput_config.drag_lock_configured = false;
 			}
 		} else if (key("accel-speed")) {
 			libinput_config.accel_speed_configured = true;
@@ -116,6 +135,10 @@ void libinput_config_init(void) {
 				libinput_config.accel_profile = LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT;
 			} else if (value("adaptive")) {
 				libinput_config.accel_profile = LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE;
+			} else {
+				invalid_value();
+				
+				libinput_config.accel_profile_configured = false;
 			}
 		} else if (key("natural-scroll")) {
 			libinput_config.natural_scroll_configured = true;
@@ -124,6 +147,10 @@ void libinput_config_init(void) {
 				libinput_config.natural_scroll = false;
 			} else if (value("enabled")) {
 				libinput_config.natural_scroll = true;
+			} else {
+				invalid_value();
+				
+				libinput_config.natural_scroll_configured = false;
 			}
 		} else if (key("left-handed")) {
 			libinput_config.left_handed_configured = true;
@@ -132,6 +159,10 @@ void libinput_config_init(void) {
 				libinput_config.left_handed = false;
 			} else if (value("enabled")) {
 				libinput_config.left_handed = true;
+			} else {
+				invalid_value();
+				
+				libinput_config.left_handed_configured = false;
 			}
 		} else if (key("click-method")) {
 			libinput_config.click_method_configured = true;
@@ -142,6 +173,10 @@ void libinput_config_init(void) {
 				libinput_config.click_method = LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS;
 			} else if (value("clickfinger")) {
 				libinput_config.click_method = LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER;
+			} else {
+				invalid_value();
+				
+				libinput_config.click_method_configured = false;
 			}
 		} else if (key("middle-emulation")) {
 			libinput_config.middle_emulation_configured = true;
@@ -150,6 +185,10 @@ void libinput_config_init(void) {
 				libinput_config.middle_emulation = LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED;
 			} else if (value("enabled")) {
 				libinput_config.middle_emulation = LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED;
+			} else {
+				invalid_value();
+				
+				libinput_config.middle_emulation_configured = false;
 			}
 		} else if (key("scroll-method")) {
 			libinput_config.scroll_method_configured = true;
@@ -162,6 +201,10 @@ void libinput_config_init(void) {
 				libinput_config.scroll_method = LIBINPUT_CONFIG_SCROLL_EDGE;
 			} else if (value("on-button-down")) {
 				libinput_config.scroll_method = LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
+			} else {
+				invalid_value();
+				
+				libinput_config.scroll_method_configured = false;
 			}
 		} else if (key("scroll-button")) {
 			libinput_config.scroll_button_configured = true;
@@ -178,6 +221,10 @@ void libinput_config_init(void) {
 				libinput_config.dwt = LIBINPUT_CONFIG_DWT_DISABLED;
 			} else if (value("enabled")) {
 				libinput_config.dwt = LIBINPUT_CONFIG_DWT_ENABLED;
+			} else {
+				invalid_value();
+				
+				libinput_config.dwt_configured = false;
 			}
 		} else if (key("scroll-factor")) {
 			libinput_config.scroll_factor = atof(pair.value);
@@ -185,6 +232,8 @@ void libinput_config_init(void) {
 			libinput_config.discrete_scroll_factor = atof(pair.value);
 		} else if (key("speed")) {
 			libinput_config.speed = atof(pair.value);
+		} else {
+			invalid_key();
 		}
 		
 		free(pair.key);
