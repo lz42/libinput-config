@@ -45,6 +45,8 @@ static bool parse_number(const char *string, double *number) {
 	*number = strtod(string, &dummy);
 	
 	if (dummy[0] != '\0' || errno == EINVAL || errno == ERANGE) {
+		errno = 0;
+		
 		return false;
 	}
 	
