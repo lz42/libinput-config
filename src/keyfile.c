@@ -28,9 +28,11 @@ struct libinput_keyfile_pair libinput_keyfile_get_pair(FILE *file) {
 	char *line = NULL;
 	size_t size = 0;
 	
-	if (getline(&line, &size, file) < 0) {
-		return pair;
-	}
+	do {
+		if (getline(&line, &size, file) < 0) {
+			return pair;
+		}
+	} while (line[0] == '\n');
 	
 	char *delim = strchr(line, '=');
 	
