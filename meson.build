@@ -13,7 +13,8 @@ shared_library('input-config',
 	[
 		'src/hook.c',
 		'src/keyfile.c',
-		'src/main.c'
+		'src/main.c',
+		'src/override.c'
 	],
 	
 	dependencies: [

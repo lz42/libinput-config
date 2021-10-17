@@ -4,6 +4,7 @@
 
 #include "config.h"
 #include "keyfile.h"
+#include "override.h"
 
 #define cmp(a, b) strcmp(a, b) == 0
 #define key(a) cmp(pair.key, a)
@@ -303,91 +304,91 @@ void libinput_config_device(struct libinput_device *device) {
 	print("configuring device '%s'", libinput_device_get_name(device));
 	
 	if (libinput_config.tap_configured) {
-		libinput_device_config_tap_set_enabled(
+		libinput_real.tap_set_enabled(
 			device,
 			libinput_config.tap
 		);
 	}
 	
 	if (libinput_config.tap_button_map_configured) {
-		libinput_device_config_tap_set_button_map(
+		libinput_real.tap_set_button_map(
 			device,
 			libinput_config.tap_button_map
 		);
 	}
 	
 	if (libinput_config.drag_configured) {
-		libinput_device_config_tap_set_drag_enabled(
+		libinput_real.tap_set_drag_enabled(
 			device,
 			libinput_config.drag
 		);
 	}
 	
 	if (libinput_config.drag_lock_configured) {
-		libinput_device_config_tap_set_drag_lock_enabled(
+		libinput_real.tap_set_drag_lock_enabled(
 			device,
 			libinput_config.drag_lock
 		);
 	}
 	
 	if (libinput_config.accel_speed_configured) {
-		libinput_device_config_accel_set_speed(
+		libinput_real.accel_set_speed(
 			device,
 			libinput_config.accel_speed
 		);
 	}
 	
 	if (libinput_config.accel_profile_configured) {
-		libinput_device_config_accel_set_profile(
+		libinput_real.accel_set_profile(
 			device,
 			libinput_config.accel_profile
 		);
 	}
 	
 	if (libinput_config.natural_scroll_configured) {
-		libinput_device_config_scroll_set_natural_scroll_enabled(
+		libinput_real.scroll_set_natural_scroll_enabled(
 			device,
 			libinput_config.natural_scroll
 		);
 	}
 	
 	if (libinput_config.left_handed_configured) {
-		libinput_device_config_left_handed_set(
+		libinput_real.left_handed_set(
 			device,
 			libinput_config.left_handed
 		);
 	}
 	
 	if (libinput_config.click_method_configured) {
-		libinput_device_config_click_set_method(
+		libinput_real.click_set_method(
 			device,
 			libinput_config.click_method
 		);
 	}
 	
 	if (libinput_config.middle_emulation_configured) {
-		libinput_device_config_middle_emulation_set_enabled(
+		libinput_real.middle_emulation_set_enabled(
 			device,
 			libinput_config.middle_emulation
 		);
 	}
 	
 	if (libinput_config.scroll_method_configured) {
-		libinput_device_config_scroll_set_method(
+		libinput_real.scroll_set_method(
 			device,
 			libinput_config.scroll_method
 		);
 	}
 	
 	if (libinput_config.scroll_button_configured) {
-		libinput_device_config_scroll_set_button(
+		libinput_real.scroll_set_button(
 			device,
 			libinput_config.scroll_button
 		);
 	}
 	
 	if (libinput_config.dwt_configured) {
-		libinput_device_config_dwt_set_enabled(
+		libinput_real.dwt_set_enabled(
 			device,
 			libinput_config.dwt
 		);

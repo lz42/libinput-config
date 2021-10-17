@@ -3,6 +3,7 @@
 #include <dlfcn.h>
 
 #include "config.h"
+#include "override.h"
 
 typedef struct libinput *(*udev_create_context_t)(
 	const struct libinput_interface *,
@@ -32,6 +33,7 @@ struct libinput *libinput_udev_create_context(
 		dlsym(RTLD_NEXT, "libinput_udev_create_context");
 	
 	libinput_config_init();
+	libinput_real_init();
 	
 	return udev_create_context(interface, user_data, udev);
 }
@@ -43,6 +45,7 @@ struct libinput *libinput_path_create_context(
 		dlsym(RTLD_NEXT, "libinput_path_create_context");
 	
 	libinput_config_init();
+	libinput_real_init();
 	
 	return path_create_context(interface, user_data);
 }
