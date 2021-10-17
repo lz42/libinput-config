@@ -90,7 +90,15 @@ void libinput_config_init(void) {
 		
 		print("option '%s' is '%s'", pair.key, pair.value);
 		
-		if (key("tap")) {
+		if (key("override-compositor")) {
+			if (value("disabled")) {
+				libinput_config.override_compositor = false;
+			} else if (value("enabled")) {
+				libinput_config.override_compositor = true;
+			} else {
+				invalid_value();
+			}
+		} else if (key("tap")) {
 			libinput_config.tap_configured = true;
 			
 			if (value("disabled")) {

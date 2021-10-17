@@ -40,12 +40,14 @@ In order for the library to work, you need to create a config file
 under `/etc/libinput.conf`. You only need to put the options you're
 going to use. For all left out options, the system defaults will be
 used. If you already configured an option in your compositor, the
-compositor will take the priority.
+compositor will take the priority unless you enable
+`override-compositor`.
 
 The config file must consist of `key=value` entries. The following
 settings are implemented:
 
 ```
+override-compositor={disabled,enabled}
 tap={disabled,enabled}
 tap-button-map={lrm,lmr}
 drag={disabled,enabled}

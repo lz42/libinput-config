@@ -7,6 +7,8 @@
 struct libinput_config {
 	bool configured;
 	
+	bool override_compositor;
+	
 	bool tap_configured;
 	enum libinput_config_tap_state tap;
 	
