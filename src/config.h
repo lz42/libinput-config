@@ -4,49 +4,28 @@
 #include <libinput.h>
 #include <stdbool.h>
 
+#define config_option(type, name)\
+	bool name##_configured;\
+	type name;
+
 struct libinput_config {
 	bool configured;
 	
 	bool override_compositor;
 	
-	bool tap_configured;
-	enum libinput_config_tap_state tap;
-	
-	bool tap_button_map_configured;
-	enum libinput_config_tap_button_map tap_button_map;
-	
-	bool drag_configured;
-	enum libinput_config_drag_state drag;
-	
-	bool drag_lock_configured;
-	enum libinput_config_drag_lock_state drag_lock;
-	
-	bool accel_speed_configured;
-	double accel_speed;
-	
-	bool accel_profile_configured;
-	enum libinput_config_accel_profile accel_profile;
-	
-	bool natural_scroll_configured;
-	bool natural_scroll;
-	
-	bool left_handed_configured;
-	bool left_handed;
-	
-	bool click_method_configured;
-	enum libinput_config_click_method click_method;
-	
-	bool middle_emulation_configured;
-	enum libinput_config_middle_emulation_state middle_emulation;
-	
-	bool scroll_method_configured;
-	enum libinput_config_scroll_method scroll_method;
-	
-	bool scroll_button_configured;
-	uint32_t scroll_button;
-	
-	bool dwt_configured;
-	enum libinput_config_dwt_state dwt;
+	config_option(enum libinput_config_tap_state, tap)
+	config_option(enum libinput_config_tap_button_map, tap_button_map)
+	config_option(enum libinput_config_drag_state, drag)
+	config_option(enum libinput_config_drag_lock_state, drag_lock)
+	config_option(double, accel_speed)
+	config_option(enum libinput_config_accel_profile, accel_profile)
+	config_option(bool, natural_scroll)
+	config_option(bool, left_handed)
+	config_option(enum libinput_config_click_method, click_method)
+	config_option(enum libinput_config_middle_emulation_state, middle_emulation)
+	config_option(enum libinput_config_scroll_method, scroll_method)
+	config_option(uint32_t, scroll_button)
+	config_option(enum libinput_config_dwt_state, dwt)
 	
 	double scroll_factor;
 	double discrete_scroll_factor;

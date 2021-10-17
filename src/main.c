@@ -18,8 +18,18 @@
 #define invalid_key() print("warning: invalid setting key")
 #define invalid_value() print("warning: invalid setting value")
 
+#define apply_config(name, function_name)\
+	if (libinput_config.name##_configured) {\
+		libinput_real.function_name(\
+			device,\
+			libinput_config.name\
+		);\
+	}
+
 struct libinput_config libinput_config = {
 	.configured = false,
+	
+	.override_compositor = false,
 	
 	.tap_configured = false,
 	.tap_button_map_configured = false,
@@ -311,94 +321,17 @@ void libinput_config_init(void) {
 void libinput_config_device(struct libinput_device *device) {
 	print("configuring device '%s'", libinput_device_get_name(device));
 	
-	if (libinput_config.tap_configured) {
-		libinput_real.tap_set_enabled(
-			device,
-			libinput_config.tap
-		);
-	}
-	
-	if (libinput_config.tap_button_map_configured) {
-		libinput_real.tap_set_button_map(
-			device,
-			libinput_config.tap_button_map
-		);
-	}
-	
-	if (libinput_config.drag_configured) {
-		libinput_real.tap_set_drag_enabled(
-			device,
-			libinput_config.drag
-		);
-	}
-	
-	if (libinput_config.drag_lock_configured) {
-		libinput_real.tap_set_drag_lock_enabled(
-			device,
-			libinput_config.drag_lock
-		);
-	}
-	
-	if (libinput_config.accel_speed_configured) {
-		libinput_real.accel_set_speed(
-			device,
-			libinput_config.accel_speed
-		);
-	}
-	
-	if (libinput_config.accel_profile_configured) {
-		libinput_real.accel_set_profile(
-			device,
-			libinput_config.accel_profile
-		);
-	}
-	
-	if (libinput_config.natural_scroll_configured) {
-		libinput_real.scroll_set_natural_scroll_enabled(
-			device,
-			libinput_config.natural_scroll
-		);
-	}
-	
-	if (libinput_config.left_handed_configured) {
-		libinput_real.left_handed_set(
-			device,
-			libinput_config.left_handed
-		);
-	}
-	
-	if (libinput_config.click_method_configured) {
-		libinput_real.click_set_method(
-			device,
-			libinput_config.click_method
-		);
-	}
-	
-	if (libinput_config.middle_emulation_configured) {
-		libinput_real.middle_emulation_set_enabled(
-			device,
-			libinput_config.middle_emulation
-		);
-	}
-	
-	if (libinput_config.scroll_method_configured) {
-		libinput_real.scroll_set_method(
-			device,
-			libinput_config.scroll_method
-		);
-	}
-	
-	if (libinput_config.scroll_button_configured) {
-		libinput_real.scroll_set_button(
-			device,
-			libinput_config.scroll_button
-		);
-	}
-	
-	if (libinput_config.dwt_configured) {
-		libinput_real.dwt_set_enabled(
-			device,
-			libinput_config.dwt
-		);
-	}
+	apply_config(tap, tap_set_enabled);
+	apply_config(tap_button_map, tap_set_button_map);
+	apply_config(drag, tap_set_drag_enabled);
+	apply_config(drag_lock, tap_set_drag_lock_enabled);
+	apply_config(accel_speed, accel_set_speed);
+	apply_config(accel_profile, accel_set_profile);
+	apply_config(natural_scroll, scroll_set_natural_scroll_enabled);
+	apply_config(left_handed, left_handed_set);
+	apply_config(click_method, click_set_method);
+	apply_config(middle_emulation, middle_emulation_set_enabled);
+	apply_config(scroll_method, scroll_set_method);
+	apply_config(scroll_button, scroll_set_button);
+	apply_config(dwt, dwt_set_enabled);
 }
