@@ -66,6 +66,16 @@ discrete-scroll-factor=[number]
 speed=[number]
 ```
 
+Notes:
+
+* `override-compositor` doesn't work for `scroll-factor`,
+  `discrete-scroll-factor`, and `speed`. If you configure them in both
+  your compositor and libinput-config, they'll be applied at the same
+  time.
+* In contrast to the touchpad `scroll-factor` that always works, the
+  mouse `discrete-scroll-factor` only works if your compositor
+  supports high-resolution scroll wheels.
+
 ## How to uninstall
 
 ```
