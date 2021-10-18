@@ -66,9 +66,9 @@ discrete-scroll-factor=[number]
 speed=[number]
 ```
 
-Notes:
+Note:
 
-* `override-compositor` doesn't work for `scroll-factor`,
+* `override-compositor` works differently for `scroll-factor`,
   `discrete-scroll-factor`, and `speed`. If you configure them in both
   your compositor and libinput-config, they'll be applied at the same
   time.
