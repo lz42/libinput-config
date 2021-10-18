@@ -109,6 +109,8 @@ void libinput_config_init(void) {
 				libinput_config.override_compositor = true;
 			} else {
 				invalid_value();
+				
+				libinput_config.override_compositor = false;
 			}
 		} else if (key("tap")) {
 			libinput_config.tap_configured = true;
