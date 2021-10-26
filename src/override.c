@@ -4,6 +4,7 @@
 
 #include "config.h"
 #include "override.h"
+#include "workaround.h"
 
 #define xstringify(a) #a
 #define stringify(a) xstringify(a)

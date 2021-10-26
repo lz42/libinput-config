@@ -5,8 +5,7 @@
 #include "config.h"
 #include "keyfile.h"
 #include "override.h"
-
-#pragma weak libinput_device_get_name
+#include "workaround.h"
 
 #define cmp(a, b) strcmp(a, b) == 0
 #define key(a) cmp(pair.key, a)

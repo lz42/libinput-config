@@ -4,9 +4,7 @@
 
 #include "config.h"
 #include "override.h"
-
-#pragma weak libinput_event_get_type
-#pragma weak libinput_event_get_device
+#include "workaround.h"
 
 typedef struct libinput *(*udev_create_context_t)(
 	const struct libinput_interface *,
