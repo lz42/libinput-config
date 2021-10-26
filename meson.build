@@ -6,30 +6,17 @@ libdir = get_option('prefix') / get_option('libdir')
 project_name = meson.project_name()
 
 if get_option('shitty_sandboxing')
+	add_project_arguments(
+		'-DLIBINPUT_SHITTY_SANDBOXING=1',
+		language: 'c'
+	)
+	
 	libdir = '/etc'
 endif
 
-shared_library('input-config',
-	[
-		'src/hook.c',
-		'src/keyfile.c',
-		'src/main.c',
-		'src/override.c'
-	],
-	
-	dependencies: [
-		dependency('libinput').partial_dependency(includes: true),
-		dependency('libudev').partial_dependency(includes: true),
-		cc.find_library('dl', required: false)
-	],
-	
-	link_args: '-Wl,--unresolved-symbols=ignore-all',
-	
-	install: true,
-	install_dir: libdir
-)
-
 if get_option('non_glibc')
+	add_project_arguments('-DLIBINPUT_NON_GLIBC=1', language: 'c')
+	
 	configure_file(
 		input: 'scripts/profile.sh.in',
 		output: 'libinput-config.sh',
@@ -64,3 +51,23 @@ else
 		command: ['scripts/unpreload.sh', libdir, project_name]
 	)
 endif
+
+shared_library('input-config',
+	[
+		'src/hook.c',
+		'src/keyfile.c',
+		'src/main.c',
+		'src/override.c'
+	],
+	
+	dependencies: [
+		dependency('libinput').partial_dependency(includes: true),
+		dependency('libudev').partial_dependency(includes: true),
+		cc.find_library('dl', required: false)
+	],
+	
+	link_args: '-Wl,--unresolved-symbols=ignore-all',
+	
+	install: true,
+	install_dir: libdir
+)
