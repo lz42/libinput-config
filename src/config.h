@@ -30,6 +30,7 @@ struct libinput_config {
 	double scroll_factor;
 	double discrete_scroll_factor;
 	double speed;
+	double gesture_speed;
 };
 
 extern struct libinput_config libinput_config;

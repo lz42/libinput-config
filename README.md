@@ -64,6 +64,7 @@ dwt={disabled,enabled}
 scroll-factor=[number]
 discrete-scroll-factor=[number]
 speed=[number]
+gesture-speed=[number]
 ```
 
 Note:

@@ -54,6 +54,7 @@ endif
 
 shared_library('input-config',
 	[
+		'src/hook-gestures.c',
 		'src/hook-init.c',
 		'src/hook-pointer.c',
 		'src/keyfile.c',

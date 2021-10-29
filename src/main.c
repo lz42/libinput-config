@@ -48,7 +48,8 @@ struct libinput_config libinput_config = {
 	
 	.scroll_factor = 1,
 	.discrete_scroll_factor = 1,
-	.speed = 1
+	.speed = 1,
+	.gesture_speed = 1
 };
 
 static bool parse_number(const char *string, double *number) {
@@ -307,6 +308,17 @@ void libinput_config_init(void) {
 				invalid_value();
 				
 				libinput_config.speed = 1;
+			}
+		} else if (key("gesture-speed")) {
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.gesture_speed
+			);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.gesture_speed = 1;
 			}
 		} else {
 			invalid_key();
