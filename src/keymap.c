@@ -21,7 +21,7 @@ bool libinput_keymap_set(uint32_t source, uint32_t destination) {
 }
 
 uint32_t libinput_keymap_transform(uint32_t source) {
-	if (source >= KEY_CODE_COUNT) {
+	if (libinput_keymap == NULL || source >= KEY_CODE_COUNT) {
 		return source;
 	}
 	
