@@ -65,17 +65,24 @@ scroll-factor=[number]
 discrete-scroll-factor=[number]
 speed=[number]
 gesture-speed=[number]
+remap-key=[number]:[number]
 ```
 
 Note:
 
-* `override-compositor` has no effect on `scroll-factor`,
-  `discrete-scroll-factor`, and `speed`. If you configure them in both
-  your compositor and libinput-config, they'll be applied at the same
-  time.
+* `override-compositor` has no effect on the following settings. If
+  you configure them in both your compositor and libinput-config,
+  they'll be applied at the same time:
+	* `scroll-factor`
+	* `discrete-scroll-factor`
+	* `speed`
+	* `gesture-speed`
+	* `remap-key`
 * In contrast to the touchpad `scroll-factor` that always works, the
   mouse `discrete-scroll-factor` only works if your compositor
   supports high-resolution scroll wheels.
+* For obvious reasons, `remap-key` can be used multiple times to remap
+  different keys.
 
 ## How to uninstall
 

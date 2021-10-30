@@ -4,6 +4,7 @@
 
 #include "config.h"
 #include "keyfile.h"
+#include "keymap.h"
 #include "override.h"
 #include "workaround.h"
 
@@ -83,6 +84,12 @@ void libinput_config_init(void) {
 		
 		return;
 	}
+	
+	print("replacing the device config functions");
+	libinput_real_init();
+	
+	print("initializing the key mapper");
+	libinput_keymap_init();
 	
 	// We need to switch locales to correctly parse numbers
 	
@@ -258,9 +265,13 @@ void libinput_config_init(void) {
 			
 			double val = 0;
 			
-			bool success = parse_number(pair.value, &val);
+			bool success =
+				parse_number(pair.value, &val) &&
+				
+				val >= 1 &&
+				val <= UINT32_MAX;
 			
-			if (!success || val > UINT32_MAX || val < 0) {
+			if (!success) {
 				invalid_value();
 				
 				libinput_config.scroll_button_configured = false;
@@ -319,6 +330,38 @@ void libinput_config_init(void) {
 				invalid_value();
 				
 				libinput_config.gesture_speed = 1;
+			}
+		} else if (key("remap-key")) {
+			char *delim = strchr(pair.value, ':');
+			
+			if (delim == NULL) {
+				invalid_value();
+			} else {
+				*delim = '\0';
+				
+				char
+					*source_str = pair.value,
+					*destination_str = delim + 1;
+				
+				double
+					source = 0,
+					destination = 0;
+				
+				bool success =
+					parse_number(source_str, &source) &&
+					parse_number(destination_str, &destination) &&
+					
+					source >= 1 &&
+					source <= UINT32_MAX &&
+					
+					destination >= 1 &&
+					destination <= UINT32_MAX;
+				
+				if (!success) {
+					invalid_value();
+				} else {
+					libinput_keymap_set((uint32_t) source, (uint32_t) destination);
+				}
 			}
 		} else {
 			invalid_key();
