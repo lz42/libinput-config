@@ -10,8 +10,14 @@ void libinput_keymap_init(void) {
 	libinput_keymap = calloc(KEY_CODE_COUNT, sizeof(uint32_t));
 }
 
-void libinput_keymap_set(uint32_t source, uint32_t destination) {
+bool libinput_keymap_set(uint32_t source, uint32_t destination) {
+	if (source >= KEY_CODE_COUNT || destination >= KEY_CODE_COUNT) {
+		return false;
+	}
+	
 	libinput_keymap[source] = destination;
+	
+	return true;
 }
 
 uint32_t libinput_keymap_transform(uint32_t source) {

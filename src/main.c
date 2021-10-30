@@ -355,12 +355,12 @@ void libinput_config_init(void) {
 					source <= UINT32_MAX &&
 					
 					destination >= 1 &&
-					destination <= UINT32_MAX;
+					destination <= UINT32_MAX &&
+					
+					libinput_keymap_set((uint32_t) source, (uint32_t) destination);
 				
 				if (!success) {
 					invalid_value();
-				} else {
-					libinput_keymap_set((uint32_t) source, (uint32_t) destination);
 				}
 			}
 		} else {
