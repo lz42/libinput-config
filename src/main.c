@@ -368,8 +368,9 @@ void libinput_config_init(void) {
 		}
 		
 		free(pair.key);
-		free(pair.value);
 	}
+	
+	fclose(file);
 	
 	uselocale(initial_locale);
 	

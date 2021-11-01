@@ -3,22 +3,6 @@
 
 #include "keyfile.h"
 
-static char *string_slice(char *str, size_t start, size_t end) {
-	size_t size = end - start;
-	
-	char *output = malloc(size * sizeof(char));
-	
-	if (output == NULL) {
-		return NULL;
-	}
-	
-	strncpy(output, str + start, size);
-	
-	output[size] = '\0';
-	
-	return output;
-}
-
 struct libinput_keyfile_pair libinput_keyfile_get_pair(FILE *file) {
 	struct libinput_keyfile_pair pair = {
 		.key = NULL,
@@ -47,13 +31,11 @@ struct libinput_keyfile_pair libinput_keyfile_get_pair(FILE *file) {
 		end = line + strlen(line);
 	}
 	
-	size_t delim_pos = delim - line;
-	size_t end_pos = end - line;
+	*delim = '\0';
+	*end = '\0';
 	
-	pair.key = string_slice(line, 0, delim_pos);
-	pair.value = string_slice(line, delim_pos + 1, end_pos);
-	
-	free(line);
+	pair.key = line;
+	pair.value = delim + 1;
 	
 	return pair;
 }
