@@ -62,9 +62,17 @@ scroll-method={none,two-fingers,edge,on-button-down}
 scroll-button=[number]
 dwt={disabled,enabled}
 scroll-factor=[number]
+scroll-factor-x=[number]
+scroll-factor-y=[number]
 discrete-scroll-factor=[number]
+discrete-scroll-factor-x=[number]
+discrete-scroll-factor-y=[number]
 speed=[number]
+speed-x=[number]
+speed-y=[number]
 gesture-speed=[number]
+gesture-speed-x=[number]
+gesture-speed-y=[number]
 remap-key=[number]:[number]
 ```
 

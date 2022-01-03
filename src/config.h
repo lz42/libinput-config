@@ -27,10 +27,17 @@ struct libinput_config {
 	config_option(uint32_t, scroll_button);
 	config_option(enum libinput_config_dwt_state, dwt);
 	
-	double scroll_factor;
-	double discrete_scroll_factor;
-	double speed;
-	double gesture_speed;
+	double scroll_factor_x;
+	double scroll_factor_y;
+	
+	double discrete_scroll_factor_x;
+	double discrete_scroll_factor_y;
+	
+	double speed_x;
+	double speed_y;
+	
+	double gesture_speed_x;
+	double gesture_speed_y;
 };
 
 extern struct libinput_config libinput_config;

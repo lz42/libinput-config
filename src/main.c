@@ -47,10 +47,17 @@ struct libinput_config libinput_config = {
 	.scroll_button_configured = false,
 	.dwt_configured = false,
 	
-	.scroll_factor = 1,
-	.discrete_scroll_factor = 1,
-	.speed = 1,
-	.gesture_speed = 1
+	.scroll_factor_x = 1,
+	.scroll_factor_y = 1,
+	
+	.discrete_scroll_factor_x = 1,
+	.discrete_scroll_factor_y = 1,
+	
+	.speed_x = 1,
+	.speed_y = 1,
+	
+	.gesture_speed_x = 1,
+	.gesture_speed_y = 1
 };
 
 static bool parse_number(const char *string, double *number) {
@@ -293,43 +300,141 @@ void libinput_config_init(void) {
 		} else if (key("scroll-factor")) {
 			bool success = parse_number(
 				pair.value,
-				&libinput_config.scroll_factor
+				&libinput_config.scroll_factor_x
 			);
 			
 			if (!success) {
 				invalid_value();
 				
-				libinput_config.scroll_factor = 1;
+				libinput_config.scroll_factor_x = 1;
+				libinput_config.scroll_factor_y = 1;
+			} else {
+				libinput_config.scroll_factor_y =
+					libinput_config.scroll_factor_x;
+			}
+		} else if (key("scroll-factor-x")) {
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.scroll_factor_x
+			);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.scroll_factor_x = 1;
+			}
+		} else if (key("scroll-factor-y")) {
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.scroll_factor_y
+			);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.scroll_factor_y = 1;
 			}
 		} else if (key("discrete-scroll-factor")) {
 			bool success = parse_number(
 				pair.value,
-				&libinput_config.discrete_scroll_factor
+				&libinput_config.discrete_scroll_factor_x
 			);
 			
 			if (!success) {
 				invalid_value();
 				
-				libinput_config.discrete_scroll_factor = 1;
+				libinput_config.discrete_scroll_factor_x = 1;
+				libinput_config.discrete_scroll_factor_y = 1;
+			} else {
+				libinput_config.discrete_scroll_factor_y =
+					libinput_config.discrete_scroll_factor_x;
 			}
-		} else if (key("speed")) {
-			bool success = parse_number(pair.value, &libinput_config.speed);
+		} else if (key("discrete-scroll-factor-x")) {
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.discrete_scroll_factor_x
+			);
 			
 			if (!success) {
 				invalid_value();
 				
-				libinput_config.speed = 1;
+				libinput_config.discrete_scroll_factor_x = 1;
+			}
+		} else if (key("discrete-scroll-factor-y")) {
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.discrete_scroll_factor_y
+			);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.discrete_scroll_factor_y = 1;
+			}
+		} else if (key("speed")) {
+			bool success = parse_number(pair.value, &libinput_config.speed_x);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.speed_x = 1;
+				libinput_config.speed_y = 1;
+			} else {
+				libinput_config.speed_y =
+					libinput_config.speed_x;
+			}
+		} else if (key("speed-x")) {
+			bool success = parse_number(pair.value, &libinput_config.speed_x);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.speed_x = 1;
+			}
+		} else if (key("speed-y")) {
+			bool success = parse_number(pair.value, &libinput_config.speed_y);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.speed_y = 1;
 			}
 		} else if (key("gesture-speed")) {
 			bool success = parse_number(
 				pair.value,
-				&libinput_config.gesture_speed
+				&libinput_config.gesture_speed_x
 			);
 			
 			if (!success) {
 				invalid_value();
 				
-				libinput_config.gesture_speed = 1;
+				libinput_config.gesture_speed_x = 1;
+				libinput_config.gesture_speed_y = 1;
+			} else {
+				libinput_config.gesture_speed_y =
+					libinput_config.gesture_speed_x;
+			}
+		} else if (key("gesture-speed-x")) {
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.gesture_speed_x
+			);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.gesture_speed_x = 1;
+			}
+		} else if (key("gesture-speed-y")) {
+			bool success = parse_number(
+				pair.value,
+				&libinput_config.gesture_speed_y
+			);
+			
+			if (!success) {
+				invalid_value();
+				
+				libinput_config.gesture_speed_y = 1;
 			}
 		} else if (key("remap-key")) {
 			char *delim = strchr(pair.value, ':');
