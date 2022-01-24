@@ -84,6 +84,12 @@ void libinput_config_init(void) {
 	}
 	libinput_config.configured = true;
 	
+	print("replacing the device config functions");
+	libinput_real_init();
+	
+	print("initializing the key mapper");
+	libinput_keymap_init();
+	
 	FILE *file = fopen("/etc/libinput.conf", "r");
 	
 	if (file == NULL) {
@@ -91,12 +97,6 @@ void libinput_config_init(void) {
 		
 		return;
 	}
-	
-	print("replacing the device config functions");
-	libinput_real_init();
-	
-	print("initializing the key mapper");
-	libinput_keymap_init();
 	
 	// We need to switch locales to correctly parse numbers
 	
