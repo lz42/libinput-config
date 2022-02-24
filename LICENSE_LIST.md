@@ -1,3 +1,3 @@
-## ISC License (LICENSE)
+## ISC License (`LICENSE`)
 
 * All files
