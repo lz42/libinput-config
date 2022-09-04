@@ -110,4 +110,4 @@ fallback is used instead.
 
 ## Inspiration
 
-* [libinput-touchpad-scroll-fix](https://gitlab.com/kirbykevinson/libinput-touchpad-scroll-fix)
+* [libinput-touchpad-scroll-fix](https://gitlab.com/warningnonpotablewater/libinput-touchpad-scroll-fix)
