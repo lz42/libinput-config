@@ -9,8 +9,24 @@
 #include "workaround.h"
 
 #define cmp(a, b) strcmp(a, b) == 0
-#define key(a) cmp(pair.key, a)
-#define value(a) cmp(pair.value, a)
+
+#define keys_start if (false) {}
+#define keys_end else {invalid_value();}
+
+#define values_start keys_start
+#define values_end(config) else {\
+	invalid_value();\
+	\
+	libinput_config.config = false;\
+}
+
+#define fancy_values_start(config)\
+	libinput_config.config##_configured = true;\
+	values_start
+#define fancy_values_end(config) values_end(config##_configured)
+
+#define key(a) else if (cmp(pair.key, a))
+#define value(a) if (cmp(pair.value, a))
 
 #define print(...)\
 	fprintf(stderr, "libinput-config: ");\
@@ -19,6 +35,35 @@
 
 #define invalid_key() print("warning: invalid setting key")
 #define invalid_value() print("warning: invalid setting value")
+
+#define keyword_value(name, config, prop)\
+	value(name) {\
+		libinput_config.config = prop;\
+	}
+
+#define binary_value(config)\
+	keyword_value("disabled", config, false)\
+	keyword_value("enabled", config, true)
+#define fancy_binary_value(config, CONFIG)\
+	keyword_value("disabled", config, LIBINPUT_CONFIG_##CONFIG##_DISABLED)\
+	keyword_value("enabled", config, LIBINPUT_CONFIG_##CONFIG##_ENABLED)
+
+#define binary_preset(name, config)\
+	key(name) {\
+		fancy_values_start(config)\
+		\
+		binary_value(config)\
+		\
+		fancy_values_end(config)\
+	}
+#define fancy_binary_preset(name, config, CONFIG)\
+	key(name) {\
+		fancy_values_start(config)\
+		\
+		fancy_binary_value(config, CONFIG)\
+		\
+		fancy_values_end(config)\
+	}
 
 #define apply_config(name, function_name)\
 	if (libinput_config.name##_configured) {\
@@ -116,65 +161,66 @@ void libinput_config_init(void) {
 		
 		print("option '%s' is '%s'", pair.key, pair.value);
 		
-		if (key("override-compositor")) {
-			if (value("disabled")) {
-				libinput_config.override_compositor = false;
-			} else if (value("enabled")) {
-				libinput_config.override_compositor = true;
-			} else {
-				invalid_value();
-				
-				libinput_config.override_compositor = false;
-			}
-		} else if (key("tap")) {
-			libinput_config.tap_configured = true;
+		keys_start
+		
+		key("override-compositor") {
+			values_start
 			
-			if (value("disabled")) {
-				libinput_config.tap = LIBINPUT_CONFIG_TAP_DISABLED;
-			} else if (value("enabled")) {
-				libinput_config.tap = LIBINPUT_CONFIG_TAP_ENABLED;
-			} else {
-				invalid_value();
-				
-				libinput_config.tap_configured = false;
-			}
-		} else if (key("tap-button-map")) {
-			libinput_config.tap_button_map_configured = true;
+			binary_value(override_compositor)
 			
-			if (value("lrm")) {
-				libinput_config.tap_button_map = LIBINPUT_CONFIG_TAP_MAP_LRM;
-			} else if (value("lmr")) {
-				libinput_config.tap_button_map = LIBINPUT_CONFIG_TAP_MAP_LMR;
-			} else {
-				invalid_value();
-				
-				libinput_config.tap_button_map_configured = false;
-			}
-		} else if (key("drag")) {
-			libinput_config.drag_configured = true;
+			values_end(override_compositor)
+		}
+		
+		binary_preset("natural-scroll", natural_scroll)
+		binary_preset("left-handed", left_handed)
+		
+		fancy_binary_preset("tap", tap, TAP)
+		fancy_binary_preset("drag", drag, DRAG)
+		fancy_binary_preset("drag-lock", drag_lock, DRAG_LOCK)
+		fancy_binary_preset("middle-emulation", middle_emulation, MIDDLE_EMULATION)
+		fancy_binary_preset("dwt", dwt, DWT)
+		
+		key("tap-button-map") {
+			fancy_values_start(tap_button_map)
 			
-			if (value("disabled")) {
-				libinput_config.drag = LIBINPUT_CONFIG_DRAG_DISABLED;
-			} else if (value("enabled")) {
-				libinput_config.drag = LIBINPUT_CONFIG_DRAG_ENABLED;
-			} else {
-				invalid_value();
-				
-				libinput_config.drag_configured = false;
-			}
-		} else if (key("drag-lock")) {
-			libinput_config.drag_lock_configured = true;
+			keyword_value("lrm", tap_button_map, LIBINPUT_CONFIG_TAP_MAP_LRM)
+			keyword_value("lmr", tap_button_map, LIBINPUT_CONFIG_TAP_MAP_LMR)
 			
-			if (value("disabled")) {
-				libinput_config.drag_lock = LIBINPUT_CONFIG_DRAG_LOCK_DISABLED;
-			} else if (value("enabled")) {
-				libinput_config.drag_lock = LIBINPUT_CONFIG_DRAG_LOCK_ENABLED;
-			} else {
-				invalid_value();
-				
-				libinput_config.drag_lock_configured = false;
-			}
-		} else if (key("accel-speed")) {
+			fancy_values_end(tap_button_map)
+		}
+		
+		key("accel-profile") {
+			fancy_values_start(accel_profile)
+			
+			keyword_value("none", accel_profile, LIBINPUT_CONFIG_ACCEL_PROFILE_NONE)
+			keyword_value("flat", accel_profile, LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT)
+			keyword_value("adaptive", accel_profile, LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE)
+			
+			fancy_values_end(accel_profile)
+		}
+		
+		key("click-method") {
+			fancy_values_start(click_method)
+			
+			keyword_value("none", click_method, LIBINPUT_CONFIG_CLICK_METHOD_NONE)
+			keyword_value("button-areas", click_method, LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS)
+			keyword_value("clickfinger", click_method, LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER)
+			
+			fancy_values_end(click_method)
+		}
+		
+		key("scroll-method") {
+			fancy_values_start(scroll_method)
+			
+			keyword_value("none", scroll_method, LIBINPUT_CONFIG_SCROLL_NO_SCROLL)
+			keyword_value("two-fingers", scroll_method, LIBINPUT_CONFIG_SCROLL_2FG)
+			keyword_value("edge", scroll_method, LIBINPUT_CONFIG_SCROLL_EDGE)
+			keyword_value("on-button-down", scroll_method, LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN)
+			
+			fancy_values_end(scroll_method)
+		}
+		
+		key("accel-speed") {
 			libinput_config.accel_speed_configured = true;
 			
 			bool success = parse_number(
@@ -187,87 +233,9 @@ void libinput_config_init(void) {
 				
 				libinput_config.accel_speed_configured = false;
 			}
-		} else if (key("accel-profile")) {
-			libinput_config.accel_profile_configured = true;
-			
-			if (value("none")) {
-				libinput_config.accel_profile = LIBINPUT_CONFIG_ACCEL_PROFILE_NONE;
-			} else if (value("flat")) {
-				libinput_config.accel_profile = LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT;
-			} else if (value("adaptive")) {
-				libinput_config.accel_profile = LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE;
-			} else {
-				invalid_value();
-				
-				libinput_config.accel_profile_configured = false;
-			}
-		} else if (key("natural-scroll")) {
-			libinput_config.natural_scroll_configured = true;
-			
-			if (value("disabled")) {
-				libinput_config.natural_scroll = false;
-			} else if (value("enabled")) {
-				libinput_config.natural_scroll = true;
-			} else {
-				invalid_value();
-				
-				libinput_config.natural_scroll_configured = false;
-			}
-		} else if (key("left-handed")) {
-			libinput_config.left_handed_configured = true;
-			
-			if (value("disabled")) {
-				libinput_config.left_handed = false;
-			} else if (value("enabled")) {
-				libinput_config.left_handed = true;
-			} else {
-				invalid_value();
-				
-				libinput_config.left_handed_configured = false;
-			}
-		} else if (key("click-method")) {
-			libinput_config.click_method_configured = true;
-			
-			if (value("none")) {
-				libinput_config.click_method = LIBINPUT_CONFIG_CLICK_METHOD_NONE;
-			} else if (value("button-areas")) {
-				libinput_config.click_method = LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS;
-			} else if (value("clickfinger")) {
-				libinput_config.click_method = LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER;
-			} else {
-				invalid_value();
-				
-				libinput_config.click_method_configured = false;
-			}
-		} else if (key("middle-emulation")) {
-			libinput_config.middle_emulation_configured = true;
-			
-			if (value("disabled")) {
-				libinput_config.middle_emulation = LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED;
-			} else if (value("enabled")) {
-				libinput_config.middle_emulation = LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED;
-			} else {
-				invalid_value();
-				
-				libinput_config.middle_emulation_configured = false;
-			}
-		} else if (key("scroll-method")) {
-			libinput_config.scroll_method_configured = true;
-			
-			if (value("none")) {
-				libinput_config.scroll_method = LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
-			} else if (value("two-fingers")) {
-				libinput_config.scroll_method = LIBINPUT_CONFIG_SCROLL_2FG;
-			} else if (value("edge")) {
-				libinput_config.scroll_method = LIBINPUT_CONFIG_SCROLL_EDGE;
-			} else if (value("on-button-down")) {
-				libinput_config.scroll_method = LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
-			} else {
-				invalid_value();
-				
-				libinput_config.scroll_method_configured = false;
-			}
-		} else if (key("scroll-button")) {
+		}
+		
+		key("scroll-button") {
 			libinput_config.scroll_button_configured = true;
 			
 			double val = 0;
@@ -285,19 +253,9 @@ void libinput_config_init(void) {
 			} else {
 				libinput_config.scroll_button = (uint32_t) val;
 			}
-		} else if (key("dwt")) {
-			libinput_config.dwt_configured = true;
-			
-			if (value("disabled")) {
-				libinput_config.dwt = LIBINPUT_CONFIG_DWT_DISABLED;
-			} else if (value("enabled")) {
-				libinput_config.dwt = LIBINPUT_CONFIG_DWT_ENABLED;
-			} else {
-				invalid_value();
-				
-				libinput_config.dwt_configured = false;
-			}
-		} else if (key("scroll-factor")) {
+		}
+		
+		key("scroll-factor") {
 			bool success = parse_number(
 				pair.value,
 				&libinput_config.scroll_factor_x
@@ -312,7 +270,9 @@ void libinput_config_init(void) {
 				libinput_config.scroll_factor_y =
 					libinput_config.scroll_factor_x;
 			}
-		} else if (key("scroll-factor-x")) {
+		}
+		
+		key("scroll-factor-x") {
 			bool success = parse_number(
 				pair.value,
 				&libinput_config.scroll_factor_x
@@ -323,7 +283,9 @@ void libinput_config_init(void) {
 				
 				libinput_config.scroll_factor_x = 1;
 			}
-		} else if (key("scroll-factor-y")) {
+		}
+		
+		key("scroll-factor-y") {
 			bool success = parse_number(
 				pair.value,
 				&libinput_config.scroll_factor_y
@@ -334,7 +296,9 @@ void libinput_config_init(void) {
 				
 				libinput_config.scroll_factor_y = 1;
 			}
-		} else if (key("discrete-scroll-factor")) {
+		}
+		
+		key("discrete-scroll-factor") {
 			bool success = parse_number(
 				pair.value,
 				&libinput_config.discrete_scroll_factor_x
@@ -349,7 +313,9 @@ void libinput_config_init(void) {
 				libinput_config.discrete_scroll_factor_y =
 					libinput_config.discrete_scroll_factor_x;
 			}
-		} else if (key("discrete-scroll-factor-x")) {
+		}
+		
+		key("discrete-scroll-factor-x") {
 			bool success = parse_number(
 				pair.value,
 				&libinput_config.discrete_scroll_factor_x
@@ -360,7 +326,9 @@ void libinput_config_init(void) {
 				
 				libinput_config.discrete_scroll_factor_x = 1;
 			}
-		} else if (key("discrete-scroll-factor-y")) {
+		}
+		
+		key("discrete-scroll-factor-y") {
 			bool success = parse_number(
 				pair.value,
 				&libinput_config.discrete_scroll_factor_y
@@ -371,7 +339,9 @@ void libinput_config_init(void) {
 				
 				libinput_config.discrete_scroll_factor_y = 1;
 			}
-		} else if (key("speed")) {
+		}
+		
+		key("speed") {
 			bool success = parse_number(pair.value, &libinput_config.speed_x);
 			
 			if (!success) {
@@ -383,7 +353,9 @@ void libinput_config_init(void) {
 				libinput_config.speed_y =
 					libinput_config.speed_x;
 			}
-		} else if (key("speed-x")) {
+		}
+		
+		key("speed-x") {
 			bool success = parse_number(pair.value, &libinput_config.speed_x);
 			
 			if (!success) {
@@ -391,7 +363,9 @@ void libinput_config_init(void) {
 				
 				libinput_config.speed_x = 1;
 			}
-		} else if (key("speed-y")) {
+		}
+		
+		key("speed-y") {
 			bool success = parse_number(pair.value, &libinput_config.speed_y);
 			
 			if (!success) {
@@ -399,7 +373,9 @@ void libinput_config_init(void) {
 				
 				libinput_config.speed_y = 1;
 			}
-		} else if (key("gesture-speed")) {
+		}
+		
+		key("gesture-speed") {
 			bool success = parse_number(
 				pair.value,
 				&libinput_config.gesture_speed_x
@@ -414,7 +390,9 @@ void libinput_config_init(void) {
 				libinput_config.gesture_speed_y =
 					libinput_config.gesture_speed_x;
 			}
-		} else if (key("gesture-speed-x")) {
+		}
+		
+		key("gesture-speed-x") {
 			bool success = parse_number(
 				pair.value,
 				&libinput_config.gesture_speed_x
@@ -425,7 +403,9 @@ void libinput_config_init(void) {
 				
 				libinput_config.gesture_speed_x = 1;
 			}
-		} else if (key("gesture-speed-y")) {
+		}
+		
+		key("gesture-speed-y") {
 			bool success = parse_number(
 				pair.value,
 				&libinput_config.gesture_speed_y
@@ -436,7 +416,9 @@ void libinput_config_init(void) {
 				
 				libinput_config.gesture_speed_y = 1;
 			}
-		} else if (key("remap-key")) {
+		}
+		
+		key("remap-key") {
 			char *delim = strchr(pair.value, ':');
 			
 			if (delim == NULL) {
@@ -468,9 +450,9 @@ void libinput_config_init(void) {
 					invalid_value();
 				}
 			}
-		} else {
-			invalid_key();
 		}
+		
+		keys_end
 		
 		free(pair.key);
 	}
