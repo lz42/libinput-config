@@ -5,111 +5,48 @@
 #include "config.h"
 #include "workaround.h"
 
-typedef double (*get_axis_value_t)(
+
+typedef double (*hooked_t)(struct libinput_event_pointer *);
+
+typedef double (*hooked_axis_t)(
 	struct libinput_event_pointer *,
 	enum libinput_pointer_axis
 );
 
-typedef double (*get_dx_t)(struct libinput_event_pointer *);
-
-double libinput_event_pointer_get_axis_value(
-	struct libinput_event_pointer *event,
-	enum libinput_pointer_axis axis
-) {
-	get_axis_value_t get_axis_value =
-		dlsym(RTLD_NEXT, "libinput_event_pointer_get_axis_value");
-	
-	if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) {
-		return
-			get_axis_value(event, axis) *
-			libinput_config.scroll_factor_x;
-	} else {
-		return
-			get_axis_value(event, axis) *
-			libinput_config.scroll_factor_y;
+#define hook_event(prop, config)\
+	double libinput_event_pointer_get_##prop(\
+		struct libinput_event_pointer *event\
+	) {\
+		hooked_t hooked = hook("libinput_event_pointer_get_" stringify(prop));\
+		\
+		return hooked(event) * libinput_config.config;\
 	}
-}
-double libinput_event_pointer_get_axis_value_discrete(
-	struct libinput_event_pointer *event,
-	enum libinput_pointer_axis axis
-) {
-	get_axis_value_t get_axis_value_discrete =
-		dlsym(RTLD_NEXT, "libinput_event_pointer_get_axis_value_discrete");
-	
-	if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) {
-		return
-			get_axis_value_discrete(event, axis) *
-			libinput_config.discrete_scroll_factor_x;
-	} else {
-		return
-			get_axis_value_discrete(event, axis) *
-			libinput_config.discrete_scroll_factor_y;
-	}
-}
 
-double libinput_event_pointer_get_scroll_value(
-	struct libinput_event_pointer *event,
-	enum libinput_pointer_axis axis
-) {
-	get_axis_value_t get_scroll_value =
-		dlsym(RTLD_NEXT, "libinput_event_pointer_get_scroll_value");
-	
-	if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) {
-		return
-			get_scroll_value(event, axis) *
-			libinput_config.scroll_factor_x;
-	} else {
-		return
-			get_scroll_value(event, axis) *
-			libinput_config.scroll_factor_y;
+#define hook_axis_event(prop, config)\
+	double libinput_event_pointer_get_##prop(\
+		struct libinput_event_pointer *event,\
+		enum libinput_pointer_axis axis\
+	) {\
+		hooked_axis_t hooked =\
+			hook("libinput_event_pointer_get_" stringify(prop));\
+		\
+		if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) {\
+			return\
+				hooked(event, axis) *\
+				libinput_config.config##_x;\
+		} else {\
+			return\
+				hooked(event, axis) *\
+				libinput_config.config##_y;\
+		}\
 	}
-}
-double libinput_event_pointer_get_scroll_value_v120(
-	struct libinput_event_pointer *event,
-	enum libinput_pointer_axis axis
-) {
-	get_axis_value_t get_scroll_value_v120 =
-		dlsym(RTLD_NEXT, "libinput_event_pointer_get_scroll_value_v120");
-	
-	if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) {
-		return
-			get_scroll_value_v120(event, axis) *
-			libinput_config.discrete_scroll_factor_x;
-	} else {
-		return
-			get_scroll_value_v120(event, axis) *
-			libinput_config.discrete_scroll_factor_y;
-	}
-}
 
-double libinput_event_pointer_get_dx(
-	struct libinput_event_pointer *event
-) {
-	get_dx_t get_dx = dlsym(RTLD_NEXT, "libinput_event_pointer_get_dx");
-	
-	return get_dx(event) * libinput_config.speed_x;
-}
-double libinput_event_pointer_get_dy(
-	struct libinput_event_pointer *event
-) {
-	get_dx_t get_dy = dlsym(RTLD_NEXT, "libinput_event_pointer_get_dy");
-	
-	return get_dy(event) * libinput_config.speed_y;
-}
+hook_event(dx, speed_x);
+hook_event(dy, speed_y);
+hook_event(dx_unaccelerated, speed_x);
+hook_event(dy_unaccelerated, speed_y);
 
-double libinput_event_pointer_get_dx_unaccelerated(
-	struct libinput_event_pointer *event
-) {
-	get_dx_t get_dx_unaccelerated =
-		dlsym(RTLD_NEXT, "libinput_event_pointer_get_dx_unaccelerated");
-	
-	return get_dx_unaccelerated(event) * libinput_config.speed_x;
-}
-double libinput_event_pointer_get_dy_unaccelerated(
-	struct libinput_event_pointer *event
-) {
-	get_dx_t get_dy_unaccelerated =
-		dlsym(RTLD_NEXT, "libinput_event_pointer_get_dy_unaccelerated");
-	
-	return get_dy_unaccelerated(event) * libinput_config.speed_y;
-}
+hook_axis_event(axis_value, scroll_factor);
+hook_axis_event(axis_value_discrete, discrete_scroll_factor);
+hook_axis_event(scroll_value, scroll_factor);
+hook_axis_event(scroll_value_v120, discrete_scroll_factor);

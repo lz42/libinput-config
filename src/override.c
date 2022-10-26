@@ -6,9 +6,6 @@
 #include "override.h"
 #include "workaround.h"
 
-#define xstringify(a) #a
-#define stringify(a) xstringify(a)
-
 #define load_function(name)\
 	.name = dlsym(RTLD_NEXT, "libinput_device_config_" stringify(name))
 

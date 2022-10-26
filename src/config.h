@@ -4,7 +4,11 @@
 #include <libinput.h>
 #include <stdbool.h>
 
+#define xstringify(a) #a
+#define stringify(a) xstringify(a)
+
 #define elc(type) enum libinput_config_##type
+#define hook(symbol) dlsym(RTLD_NEXT, symbol)
 
 #define config_option(type, name)\
 	bool name##_configured;\

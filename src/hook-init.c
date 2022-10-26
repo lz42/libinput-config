@@ -23,7 +23,7 @@ struct libinput *libinput_udev_create_context(
 	struct udev *udev
 ) {
 	udev_create_context_t udev_create_context =
-		dlsym(RTLD_NEXT, "libinput_udev_create_context");
+		hook("libinput_udev_create_context");
 	
 	libinput_config_init();
 	
@@ -34,7 +34,7 @@ struct libinput *libinput_path_create_context(
 	void *user_data
 ) {
 	path_create_context_t path_create_context =
-		dlsym(RTLD_NEXT, "libinput_path_create_context");
+		hook("libinput_path_create_context");
 	
 	libinput_config_init();
 	
@@ -42,7 +42,7 @@ struct libinput *libinput_path_create_context(
 }
 
 struct libinput_event *libinput_get_event(struct libinput *libinput) {
-	get_event_t get_event = dlsym(RTLD_NEXT, "libinput_get_event");
+	get_event_t get_event = hook("libinput_get_event");
 	
 	struct libinput_event *event = get_event(libinput);
 	
