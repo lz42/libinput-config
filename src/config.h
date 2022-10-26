@@ -4,6 +4,8 @@
 #include <libinput.h>
 #include <stdbool.h>
 
+#define elc(type) enum libinput_config_##type
+
 #define config_option(type, name)\
 	bool name##_configured;\
 	type name
@@ -13,19 +15,19 @@ struct libinput_config {
 	
 	bool override_compositor;
 	
-	config_option(enum libinput_config_tap_state, tap);
-	config_option(enum libinput_config_tap_button_map, tap_button_map);
-	config_option(enum libinput_config_drag_state, drag);
-	config_option(enum libinput_config_drag_lock_state, drag_lock);
+	config_option(elc(tap_state), tap);
+	config_option(elc(tap_button_map), tap_button_map);
+	config_option(elc(drag_state), drag);
+	config_option(elc(drag_lock_state), drag_lock);
 	config_option(double, accel_speed);
-	config_option(enum libinput_config_accel_profile, accel_profile);
+	config_option(elc(accel_profile), accel_profile);
 	config_option(bool, natural_scroll);
 	config_option(bool, left_handed);
-	config_option(enum libinput_config_click_method, click_method);
-	config_option(enum libinput_config_middle_emulation_state, middle_emulation);
-	config_option(enum libinput_config_scroll_method, scroll_method);
+	config_option(elc(click_method), click_method);
+	config_option(elc(middle_emulation_state), middle_emulation);
+	config_option(elc(scroll_method), scroll_method);
 	config_option(uint32_t, scroll_button);
-	config_option(enum libinput_config_dwt_state, dwt);
+	config_option(elc(dwt_state), dwt);
 	
 	double scroll_factor_x;
 	double scroll_factor_y;
