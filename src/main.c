@@ -65,6 +65,85 @@
 		fancy_values_end(config)\
 	}
 
+#define enum_preset_2(name, config, o1, c1, o2, c2)\
+	key(name) {\
+		fancy_values_start(config)\
+		\
+		keyword_value(o1, config, c1)\
+		keyword_value(o2, config, c2)\
+		\
+		fancy_values_end(config)\
+	}
+#define enum_preset_3(name, config, o1, c1, o2, c2, o3, c3)\
+	key(name) {\
+		fancy_values_start(config)\
+		\
+		keyword_value(o1, config, c1)\
+		keyword_value(o2, config, c2)\
+		keyword_value(o3, config, c3)\
+		\
+		fancy_values_end(config)\
+	}
+#define enum_preset_4(name, config, o1, c1, o2, c2, o3, c3, o4, c4)\
+	key(name) {\
+		fancy_values_start(config)\
+		\
+		keyword_value(o1, config, c1)\
+		keyword_value(o2, config, c2)\
+		keyword_value(o3, config, c3)\
+		keyword_value(o4, config, c4)\
+		\
+		fancy_values_end(config)\
+	}
+
+#define fancy_parse_number(config)\
+	bool success = parse_number(\
+		pair.value,\
+		&libinput_config.config\
+	)
+
+#define check_parse_failure(config, default_value)\
+	if (!success) {\
+		invalid_value();\
+		\
+		libinput_config.config = default_value;\
+	}
+
+#define simple_parse_preset(name, config)\
+	key(name) {\
+		fancy_values_start(config)\
+		\
+		fancy_parse_number(config);\
+		\
+		check_parse_failure(config##_configured, false)\
+	}
+
+#define hacky_parse_preset(name, config)\
+	key(name) {\
+		fancy_parse_number(config);\
+		\
+		check_parse_failure(config, 1)\
+	}
+#define double_hacky_parse_preset(name, config)\
+	key(name) {\
+		fancy_parse_number(config##_x);\
+		\
+		if (!success) {\
+			invalid_value();\
+			\
+			libinput_config.config##_x = 1;\
+			libinput_config.config##_y = 1;\
+		} else {\
+			libinput_config.config##_y =\
+				libinput_config.config##_x;\
+		}\
+	}
+
+#define xy_parse_preset(name, config)\
+	double_hacky_parse_preset(name, config)\
+	hacky_parse_preset(name "-x", config##_x)\
+	hacky_parse_preset(name "-y", config##_y)
+
 #define apply_config(name, function_name)\
 	if (libinput_config.name##_configured) {\
 		libinput_real.function_name(\
@@ -180,63 +259,38 @@ void libinput_config_init(void) {
 		fancy_binary_preset("middle-emulation", middle_emulation, MIDDLE_EMULATION)
 		fancy_binary_preset("dwt", dwt, DWT)
 		
-		key("tap-button-map") {
-			fancy_values_start(tap_button_map)
-			
-			keyword_value("lrm", tap_button_map, LIBINPUT_CONFIG_TAP_MAP_LRM)
-			keyword_value("lmr", tap_button_map, LIBINPUT_CONFIG_TAP_MAP_LMR)
-			
-			fancy_values_end(tap_button_map)
-		}
+		enum_preset_2("tap-button-map", tap_button_map,
+			"lrm", LIBINPUT_CONFIG_TAP_MAP_LRM,
+			"lmr", LIBINPUT_CONFIG_TAP_MAP_LMR
+		)
 		
-		key("accel-profile") {
-			fancy_values_start(accel_profile)
-			
-			keyword_value("none", accel_profile, LIBINPUT_CONFIG_ACCEL_PROFILE_NONE)
-			keyword_value("flat", accel_profile, LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT)
-			keyword_value("adaptive", accel_profile, LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE)
-			
-			fancy_values_end(accel_profile)
-		}
+		enum_preset_3("accel-profile", accel_profile,
+			"none", LIBINPUT_CONFIG_ACCEL_PROFILE_NONE,
+			"flat", LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT,
+			"adaptive", LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE
+		)
+		enum_preset_3("click-method", click_method,
+			"none", LIBINPUT_CONFIG_CLICK_METHOD_NONE,
+			"button-areas", LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS,
+			"clickfinger", LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER
+		)
 		
-		key("click-method") {
-			fancy_values_start(click_method)
-			
-			keyword_value("none", click_method, LIBINPUT_CONFIG_CLICK_METHOD_NONE)
-			keyword_value("button-areas", click_method, LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS)
-			keyword_value("clickfinger", click_method, LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER)
-			
-			fancy_values_end(click_method)
-		}
+		enum_preset_4("scroll-method", scroll_method,
+			"none", LIBINPUT_CONFIG_SCROLL_NO_SCROLL,
+			"two-fingers", LIBINPUT_CONFIG_SCROLL_2FG,
+			"edge", LIBINPUT_CONFIG_SCROLL_EDGE,
+			"on-button-down", LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN
+		)
 		
-		key("scroll-method") {
-			fancy_values_start(scroll_method)
-			
-			keyword_value("none", scroll_method, LIBINPUT_CONFIG_SCROLL_NO_SCROLL)
-			keyword_value("two-fingers", scroll_method, LIBINPUT_CONFIG_SCROLL_2FG)
-			keyword_value("edge", scroll_method, LIBINPUT_CONFIG_SCROLL_EDGE)
-			keyword_value("on-button-down", scroll_method, LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN)
-			
-			fancy_values_end(scroll_method)
-		}
+		simple_parse_preset("accel-speed", accel_speed)
 		
-		key("accel-speed") {
-			libinput_config.accel_speed_configured = true;
-			
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.accel_speed
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.accel_speed_configured = false;
-			}
-		}
+		xy_parse_preset("scroll-factor", scroll_factor)
+		xy_parse_preset("discrete-scroll-factor", discrete_scroll_factor)
+		xy_parse_preset("speed", speed)
+		xy_parse_preset("gesture-speed", gesture_speed)
 		
 		key("scroll-button") {
-			libinput_config.scroll_button_configured = true;
+			fancy_values_start(scroll_button)
 			
 			double val = 0;
 			
@@ -252,169 +306,6 @@ void libinput_config_init(void) {
 				libinput_config.scroll_button_configured = false;
 			} else {
 				libinput_config.scroll_button = (uint32_t) val;
-			}
-		}
-		
-		key("scroll-factor") {
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.scroll_factor_x
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.scroll_factor_x = 1;
-				libinput_config.scroll_factor_y = 1;
-			} else {
-				libinput_config.scroll_factor_y =
-					libinput_config.scroll_factor_x;
-			}
-		}
-		
-		key("scroll-factor-x") {
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.scroll_factor_x
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.scroll_factor_x = 1;
-			}
-		}
-		
-		key("scroll-factor-y") {
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.scroll_factor_y
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.scroll_factor_y = 1;
-			}
-		}
-		
-		key("discrete-scroll-factor") {
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.discrete_scroll_factor_x
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.discrete_scroll_factor_x = 1;
-				libinput_config.discrete_scroll_factor_y = 1;
-			} else {
-				libinput_config.discrete_scroll_factor_y =
-					libinput_config.discrete_scroll_factor_x;
-			}
-		}
-		
-		key("discrete-scroll-factor-x") {
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.discrete_scroll_factor_x
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.discrete_scroll_factor_x = 1;
-			}
-		}
-		
-		key("discrete-scroll-factor-y") {
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.discrete_scroll_factor_y
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.discrete_scroll_factor_y = 1;
-			}
-		}
-		
-		key("speed") {
-			bool success = parse_number(pair.value, &libinput_config.speed_x);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.speed_x = 1;
-				libinput_config.speed_y = 1;
-			} else {
-				libinput_config.speed_y =
-					libinput_config.speed_x;
-			}
-		}
-		
-		key("speed-x") {
-			bool success = parse_number(pair.value, &libinput_config.speed_x);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.speed_x = 1;
-			}
-		}
-		
-		key("speed-y") {
-			bool success = parse_number(pair.value, &libinput_config.speed_y);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.speed_y = 1;
-			}
-		}
-		
-		key("gesture-speed") {
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.gesture_speed_x
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.gesture_speed_x = 1;
-				libinput_config.gesture_speed_y = 1;
-			} else {
-				libinput_config.gesture_speed_y =
-					libinput_config.gesture_speed_x;
-			}
-		}
-		
-		key("gesture-speed-x") {
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.gesture_speed_x
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.gesture_speed_x = 1;
-			}
-		}
-		
-		key("gesture-speed-y") {
-			bool success = parse_number(
-				pair.value,
-				&libinput_config.gesture_speed_y
-			);
-			
-			if (!success) {
-				invalid_value();
-				
-				libinput_config.gesture_speed_y = 1;
 			}
 		}
 		
