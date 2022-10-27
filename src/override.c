@@ -29,6 +29,7 @@ struct libinput_real libinput_real = {
 	.tap_set_button_map = NULL,
 	.tap_set_drag_enabled = NULL,
 	.tap_set_drag_lock_enabled = NULL,
+	.scroll_set_button_lock_enabled = NULL,
 	.accel_set_speed = NULL,
 	.accel_set_profile = NULL,
 	.scroll_set_natural_scroll_enabled = NULL,
@@ -47,6 +48,7 @@ void libinput_real_init(void) {
 		load_function(tap_set_button_map),
 		load_function(tap_set_drag_enabled),
 		load_function(tap_set_drag_lock_enabled),
+		load_function(scroll_set_button_lock_enabled),
 		load_function(accel_set_speed),
 		load_function(accel_set_profile),
 		load_function(scroll_set_natural_scroll_enabled),
@@ -64,6 +66,7 @@ replace_function(tap_set_enabled, tap, elc(tap_state));
 replace_function(tap_set_button_map, tap_button_map, elc(tap_button_map));
 replace_function(tap_set_drag_enabled, drag, elc(drag_state));
 replace_function(tap_set_drag_lock_enabled, drag_lock, elc(drag_lock_state));
+replace_function(scroll_set_button_lock_enabled, scroll_button_lock, elc(scroll_button_lock_state));
 replace_function(accel_set_speed, accel_speed, double);
 replace_function(accel_set_profile, accel_profile, elc(accel_profile));
 replace_function(scroll_set_natural_scroll_enabled, natural_scroll, int);

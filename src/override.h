@@ -14,6 +14,7 @@ struct libinput_real {
 	config_function(tap_set_button_map, elc(tap_button_map));
 	config_function(tap_set_drag_enabled, elc(drag_state));
 	config_function(tap_set_drag_lock_enabled, elc(drag_lock_state));
+	config_function(scroll_set_button_lock_enabled, elc(scroll_button_lock_state));
 	config_function(accel_set_speed, double);
 	config_function(accel_set_profile, elc(accel_profile));
 	config_function(scroll_set_natural_scroll_enabled, int);

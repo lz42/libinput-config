@@ -161,6 +161,7 @@ struct libinput_config libinput_config = {
 	.tap_button_map_configured = false,
 	.drag_configured = false,
 	.drag_lock_configured = false,
+	.scroll_button_lock_configured = false,
 	.accel_speed_configured = false,
 	.accel_profile_configured = false,
 	.natural_scroll_configured = false,
@@ -257,6 +258,7 @@ void libinput_config_init(void) {
 		fancy_binary_preset("tap", tap, TAP)
 		fancy_binary_preset("drag", drag, DRAG)
 		fancy_binary_preset("drag-lock", drag_lock, DRAG_LOCK)
+		fancy_binary_preset("scroll-button-lock", scroll_button_lock, SCROLL_BUTTON_LOCK)
 		fancy_binary_preset("middle-emulation", middle_emulation, MIDDLE_EMULATION)
 		fancy_binary_preset("dwt", dwt, DWT)
 		fancy_binary_preset("dwtp", dwtp, DWTP)
@@ -364,6 +366,7 @@ void libinput_config_device(struct libinput_device *device) {
 	apply_config(tap_button_map, tap_set_button_map);
 	apply_config(drag, tap_set_drag_enabled);
 	apply_config(drag_lock, tap_set_drag_lock_enabled);
+	apply_config(scroll_button_lock, scroll_set_button_lock_enabled);
 	apply_config(accel_speed, accel_set_speed);
 	apply_config(accel_profile, accel_set_profile);
 	apply_config(natural_scroll, scroll_set_natural_scroll_enabled);
