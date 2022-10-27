@@ -23,6 +23,7 @@ struct libinput_real {
 	config_function(scroll_set_method, elc(scroll_method));
 	config_function(scroll_set_button, uint32_t);
 	config_function(dwt_set_enabled, elc(dwt_state));
+	config_function(dwtp_set_enabled, elc(dwtp_state));
 };
 
 extern struct libinput_real libinput_real;

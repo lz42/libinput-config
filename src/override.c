@@ -37,7 +37,8 @@ struct libinput_real libinput_real = {
 	.middle_emulation_set_enabled = NULL,
 	.scroll_set_method = NULL,
 	.scroll_set_button = NULL,
-	.dwt_set_enabled = NULL
+	.dwt_set_enabled = NULL,
+	.dwtp_set_enabled = NULL
 };
 
 void libinput_real_init(void) {
@@ -54,7 +55,8 @@ void libinput_real_init(void) {
 		load_function(middle_emulation_set_enabled),
 		load_function(scroll_set_method),
 		load_function(scroll_set_button),
-		load_function(dwt_set_enabled)
+		load_function(dwt_set_enabled),
+		load_function(dwtp_set_enabled)
 	};
 }
 
@@ -71,3 +73,4 @@ replace_function(middle_emulation_set_enabled, middle_emulation, elc(middle_emul
 replace_function(scroll_set_method, scroll_method, elc(scroll_method));
 replace_function(scroll_set_button, scroll_button, uint32_t);
 replace_function(dwt_set_enabled, dwt, elc(dwt_state));
+replace_function(dwtp_set_enabled, dwtp, elc(dwtp_state));

@@ -32,6 +32,7 @@ struct libinput_config {
 	config_option(elc(scroll_method), scroll_method);
 	config_option(uint32_t, scroll_button);
 	config_option(elc(dwt_state), dwt);
+	config_option(elc(dwtp_state), dwtp);
 	
 	double scroll_factor_x;
 	double scroll_factor_y;
