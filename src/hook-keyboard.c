@@ -3,8 +3,6 @@
 #include <dlfcn.h>
 
 #include "config.h"
-#include "keymap.h"
-#include "workaround.h"
 
 typedef uint32_t (*get_key_t)(struct libinput_event_keyboard *);
 

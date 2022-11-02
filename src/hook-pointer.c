@@ -3,8 +3,6 @@
 #include <dlfcn.h>
 
 #include "config.h"
-#include "workaround.h"
-
 
 typedef double (*hooked_t)(struct libinput_event_pointer *);
 

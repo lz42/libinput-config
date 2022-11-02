@@ -3,7 +3,6 @@
 #include <dlfcn.h>
 
 #include "config.h"
-#include "workaround.h"
 
 typedef struct libinput *(*udev_create_context_t)(
 	const struct libinput_interface *,

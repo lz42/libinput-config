@@ -3,8 +3,6 @@
 #include <dlfcn.h>
 
 #include "config.h"
-#include "override.h"
-#include "workaround.h"
 
 #define load_function(name)\
 	.name = dlsym(RTLD_NEXT, "libinput_device_config_" stringify(name))
@@ -22,6 +20,14 @@
 		} else {\
 			return libinput_real.name(a, b);\
 		}\
+	}
+
+#define apply_config(name, function_name)\
+	if (libinput_config.name##_configured) {\
+		libinput_real.function_name(\
+			device,\
+			libinput_config.name\
+		);\
 	}
 
 struct libinput_real libinput_real = {
@@ -77,3 +83,23 @@ replace_function(scroll_set_method, scroll_method, elc(scroll_method));
 replace_function(scroll_set_button, scroll_button, uint32_t);
 replace_function(dwt_set_enabled, dwt, elc(dwt_state));
 replace_function(dwtp_set_enabled, dwtp, elc(dwtp_state));
+
+void libinput_config_device(struct libinput_device *device) {
+	print("configuring device '%s'", libinput_device_get_name(device));
+	
+	apply_config(tap, tap_set_enabled);
+	apply_config(tap_button_map, tap_set_button_map);
+	apply_config(drag, tap_set_drag_enabled);
+	apply_config(drag_lock, tap_set_drag_lock_enabled);
+	apply_config(scroll_button_lock, scroll_set_button_lock_enabled);
+	apply_config(accel_speed, accel_set_speed);
+	apply_config(accel_profile, accel_set_profile);
+	apply_config(natural_scroll, scroll_set_natural_scroll_enabled);
+	apply_config(left_handed, left_handed_set);
+	apply_config(click_method, click_set_method);
+	apply_config(middle_emulation, middle_emulation_set_enabled);
+	apply_config(scroll_method, scroll_set_method);
+	apply_config(scroll_button, scroll_set_button);
+	apply_config(dwt, dwt_set_enabled);
+	apply_config(dwtp, dwtp_set_enabled);
+}

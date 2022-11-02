@@ -58,7 +58,6 @@ shared_library('input-config',
 		'src/hook-init.c',
 		'src/hook-keyboard.c',
 		'src/hook-pointer.c',
-		'src/keyfile.c',
 		'src/keymap.c',
 		'src/main.c',
 		'src/override.c'

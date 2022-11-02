@@ -3,10 +3,6 @@
 #include <string.h>
 
 #include "config.h"
-#include "keyfile.h"
-#include "keymap.h"
-#include "override.h"
-#include "workaround.h"
 
 #define cmp(a, b) strcmp(a, b) == 0
 
@@ -27,11 +23,6 @@
 
 #define key(a) else if (cmp(pair.key, a))
 #define value(a) if (cmp(pair.value, a))
-
-#define print(...)\
-	fprintf(stderr, "libinput-config: ");\
-	fprintf(stderr, __VA_ARGS__);\
-	fprintf(stderr, "\n");\
 
 #define invalid_key() print("warning: invalid setting key")
 #define invalid_value() print("warning: invalid setting value")
@@ -144,13 +135,9 @@
 	hacky_parse_preset(name "-x", config##_x)\
 	hacky_parse_preset(name "-y", config##_y)
 
-#define apply_config(name, function_name)\
-	if (libinput_config.name##_configured) {\
-		libinput_real.function_name(\
-			device,\
-			libinput_config.name\
-		);\
-	}
+struct keyfile_pair {
+	char *key, *value;
+};
 
 struct libinput_config libinput_config = {
 	.configured = false,
@@ -200,6 +187,43 @@ static bool parse_number(const char *string, double *number) {
 	return true;
 }
 
+static struct keyfile_pair keyfile_get_pair(FILE *file) {
+	struct keyfile_pair pair = {
+		.key = NULL,
+		.value = NULL
+	};
+	
+	char *line = NULL;
+	size_t size = 0;
+	
+	char *delim = NULL;
+	
+	do {
+		free(line);
+		line = NULL;
+		
+		if (getline(&line, &size, file) < 0) {
+			return pair;
+		}
+		
+		delim = strchr(line, '=');
+	} while (delim == NULL);
+	
+	char *end = strchr(line, '\n');
+	
+	if (end == NULL) {
+		end = line + strlen(line);
+	}
+	
+	*delim = '\0';
+	*end = '\0';
+	
+	pair.key = line;
+	pair.value = delim + 1;
+	
+	return pair;
+}
+
 void libinput_config_init(void) {
 	print("initializing");
 	
@@ -233,8 +257,7 @@ void libinput_config_init(void) {
 	uselocale(c_locale);
 	
 	while (true) {
-		struct libinput_keyfile_pair pair =
-			libinput_keyfile_get_pair(file);
+		struct keyfile_pair pair = keyfile_get_pair(file);
 		
 		if (pair.key == NULL || pair.value == NULL) {
 			break;
@@ -357,24 +380,4 @@ void libinput_config_init(void) {
 	uselocale(initial_locale);
 	
 	print("initialized");
-}
-
-void libinput_config_device(struct libinput_device *device) {
-	print("configuring device '%s'", libinput_device_get_name(device));
-	
-	apply_config(tap, tap_set_enabled);
-	apply_config(tap_button_map, tap_set_button_map);
-	apply_config(drag, tap_set_drag_enabled);
-	apply_config(drag_lock, tap_set_drag_lock_enabled);
-	apply_config(scroll_button_lock, scroll_set_button_lock_enabled);
-	apply_config(accel_speed, accel_set_speed);
-	apply_config(accel_profile, accel_set_profile);
-	apply_config(natural_scroll, scroll_set_natural_scroll_enabled);
-	apply_config(left_handed, left_handed_set);
-	apply_config(click_method, click_set_method);
-	apply_config(middle_emulation, middle_emulation_set_enabled);
-	apply_config(scroll_method, scroll_set_method);
-	apply_config(scroll_button, scroll_set_button);
-	apply_config(dwt, dwt_set_enabled);
-	apply_config(dwtp, dwtp_set_enabled);
 }

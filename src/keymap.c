@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "keymap.h"
+#include "config.h"
 
 static const uint32_t KEY_CODE_COUNT = 768;
 
