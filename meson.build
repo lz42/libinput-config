@@ -54,10 +54,10 @@ endif
 
 shared_library('input-config',
 	[
-		'src/hook-gestures.c',
-		'src/hook-init.c',
-		'src/hook-keyboard.c',
-		'src/hook-pointer.c',
+		'src/hooks/gestures.c',
+		'src/hooks/init.c',
+		'src/hooks/keyboard.c',
+		'src/hooks/pointer.c',
 		'src/keymap.c',
 		'src/main.c',
 		'src/override.c'
@@ -70,6 +70,8 @@ shared_library('input-config',
 	],
 	
 	link_args: '-Wl,--unresolved-symbols=ignore-all',
+	
+	include_directories: include_directories('src'),
 	
 	install: true,
 	install_dir: libdir
