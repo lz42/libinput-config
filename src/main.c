@@ -4,6 +4,61 @@
 
 #include "config.h"
 
+struct keyfile_pair {
+	char *key, *value;
+};
+
+static bool parse_number(const char *string, double *number) {
+	char *dummy = NULL;
+	
+	*number = strtod(string, &dummy);
+	
+	if (dummy[0] != '\0' || errno == EINVAL || errno == ERANGE) {
+		errno = 0;
+		
+		return false;
+	}
+	
+	return true;
+}
+
+static struct keyfile_pair keyfile_get_pair(FILE *file) {
+	struct keyfile_pair pair = {
+		.key = NULL,
+		.value = NULL
+	};
+	
+	char *line = NULL;
+	size_t size = 0;
+	
+	char *delim = NULL;
+	
+	do {
+		free(line);
+		line = NULL;
+		
+		if (getline(&line, &size, file) < 0) {
+			return pair;
+		}
+		
+		delim = strchr(line, '=');
+	} while (delim == NULL);
+	
+	char *end = strchr(line, '\n');
+	
+	if (end == NULL) {
+		end = line + strlen(line);
+	}
+	
+	*delim = '\0';
+	*end = '\0';
+	
+	pair.key = line;
+	pair.value = delim + 1;
+	
+	return pair;
+}
+
 #define cmp(a, b) strcmp(a, b) == 0
 
 #define keys_start if (false) {}
@@ -134,95 +189,6 @@
 	double_hacky_parse_preset(name, config)\
 	hacky_parse_preset(name "-x", config##_x)\
 	hacky_parse_preset(name "-y", config##_y)
-
-struct keyfile_pair {
-	char *key, *value;
-};
-
-struct libinput_config libinput_config = {
-	.configured = false,
-	
-	.override_compositor = false,
-	
-	.tap_configured = false,
-	.tap_button_map_configured = false,
-	.drag_configured = false,
-	.drag_lock_configured = false,
-	.scroll_button_lock_configured = false,
-	.accel_speed_configured = false,
-	.accel_profile_configured = false,
-	.natural_scroll_configured = false,
-	.left_handed_configured = false,
-	.click_method_configured = false,
-	.middle_emulation_configured = false,
-	.scroll_method_configured = false,
-	.scroll_button_configured = false,
-	.dwt_configured = false,
-	.dwtp_configured = false,
-	
-	.scroll_factor_x = 1,
-	.scroll_factor_y = 1,
-	
-	.discrete_scroll_factor_x = 1,
-	.discrete_scroll_factor_y = 1,
-	
-	.speed_x = 1,
-	.speed_y = 1,
-	
-	.gesture_speed_x = 1,
-	.gesture_speed_y = 1
-};
-
-static bool parse_number(const char *string, double *number) {
-	char *dummy = NULL;
-	
-	*number = strtod(string, &dummy);
-	
-	if (dummy[0] != '\0' || errno == EINVAL || errno == ERANGE) {
-		errno = 0;
-		
-		return false;
-	}
-	
-	return true;
-}
-
-static struct keyfile_pair keyfile_get_pair(FILE *file) {
-	struct keyfile_pair pair = {
-		.key = NULL,
-		.value = NULL
-	};
-	
-	char *line = NULL;
-	size_t size = 0;
-	
-	char *delim = NULL;
-	
-	do {
-		free(line);
-		line = NULL;
-		
-		if (getline(&line, &size, file) < 0) {
-			return pair;
-		}
-		
-		delim = strchr(line, '=');
-	} while (delim == NULL);
-	
-	char *end = strchr(line, '\n');
-	
-	if (end == NULL) {
-		end = line + strlen(line);
-	}
-	
-	*delim = '\0';
-	*end = '\0';
-	
-	pair.key = line;
-	pair.value = delim + 1;
-	
-	return pair;
-}
 
 void libinput_config_init(void) {
 	print("initializing");

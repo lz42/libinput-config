@@ -26,12 +26,11 @@ asm (".symver dlsym, dlsym@GLIBC_2.2.5");
 #define elc(type) enum libinput_config_##type
 #define hook(symbol) dlsym(RTLD_NEXT, symbol)
 
-#define config_option(type, name)\
+#define config_option(type, name, function)\
 	bool name##_configured;\
-	type name
-
-#define config_function(name, type)\
-	enum libinput_config_status (*name)(\
+	type name;\
+	\
+	enum libinput_config_status (*function)(\
 		struct libinput_device *,\
 		type\
 	)
@@ -41,21 +40,21 @@ struct libinput_config {
 	
 	bool override_compositor;
 	
-	config_option(elc(tap_state), tap);
-	config_option(elc(tap_button_map), tap_button_map);
-	config_option(elc(drag_state), drag);
-	config_option(elc(drag_lock_state), drag_lock);
-	config_option(elc(scroll_button_lock_state), scroll_button_lock);
-	config_option(double, accel_speed);
-	config_option(elc(accel_profile), accel_profile);
-	config_option(bool, natural_scroll);
-	config_option(bool, left_handed);
-	config_option(elc(click_method), click_method);
-	config_option(elc(middle_emulation_state), middle_emulation);
-	config_option(elc(scroll_method), scroll_method);
-	config_option(uint32_t, scroll_button);
-	config_option(elc(dwt_state), dwt);
-	config_option(elc(dwtp_state), dwtp);
+	config_option(elc(tap_state), tap, tap_set_enabled);
+	config_option(elc(tap_button_map), tap_button_map, tap_set_button_map);
+	config_option(elc(drag_state), drag, tap_set_drag_enabled);
+	config_option(elc(drag_lock_state), drag_lock, tap_set_drag_lock_enabled);
+	config_option(elc(scroll_button_lock_state), scroll_button_lock, scroll_set_button_lock_enabled);
+	config_option(double, accel_speed, accel_set_speed);
+	config_option(elc(accel_profile), accel_profile, accel_set_profile);
+	config_option(bool, natural_scroll, scroll_set_natural_scroll_enabled);
+	config_option(bool, left_handed, left_handed_set);
+	config_option(elc(click_method), click_method, click_set_method);
+	config_option(elc(middle_emulation_state), middle_emulation, middle_emulation_set_enabled);
+	config_option(elc(scroll_method), scroll_method, scroll_set_method);
+	config_option(uint32_t, scroll_button, scroll_set_button);
+	config_option(elc(dwt_state), dwt, dwt_set_enabled);
+	config_option(elc(dwtp_state), dwtp, dwtp_set_enabled);
 	
 	double scroll_factor_x;
 	double scroll_factor_y;
@@ -70,26 +69,9 @@ struct libinput_config {
 	double gesture_speed_y;
 };
 
-struct libinput_real {
-	config_function(tap_set_enabled, elc(tap_state));
-	config_function(tap_set_button_map, elc(tap_button_map));
-	config_function(tap_set_drag_enabled, elc(drag_state));
-	config_function(tap_set_drag_lock_enabled, elc(drag_lock_state));
-	config_function(scroll_set_button_lock_enabled, elc(scroll_button_lock_state));
-	config_function(accel_set_speed, double);
-	config_function(accel_set_profile, elc(accel_profile));
-	config_function(scroll_set_natural_scroll_enabled, int);
-	config_function(left_handed_set, int);
-	config_function(click_set_method, elc(click_method));
-	config_function(middle_emulation_set_enabled, elc(middle_emulation_state));
-	config_function(scroll_set_method, elc(scroll_method));
-	config_function(scroll_set_button, uint32_t);
-	config_function(dwt_set_enabled, elc(dwt_state));
-	config_function(dwtp_set_enabled, elc(dwtp_state));
-};
+#undef config_option
 
 extern struct libinput_config libinput_config;
-extern struct libinput_real libinput_real;
 
 void libinput_config_init(void);
 void libinput_config_device(struct libinput_device *);

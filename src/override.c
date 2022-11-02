@@ -4,8 +4,14 @@
 
 #include "config.h"
 
+#define config_option(name, function)\
+	.name##_configured = false,\
+	.function = NULL
+
 #define load_function(name)\
-	.name = dlsym(RTLD_NEXT, "libinput_device_config_" stringify(name))
+	libinput_config.name = dlsym(RTLD_NEXT,\
+		"libinput_device_config_" stringify(name)\
+	)
 
 #define replace_function(name, config_name, type)\
 	elc(status) libinput_device_config_##name(\
@@ -18,54 +24,68 @@
 		) {\
 			return LIBINPUT_CONFIG_STATUS_SUCCESS;\
 		} else {\
-			return libinput_real.name(a, b);\
+			return libinput_config.name(a, b);\
 		}\
 	}
 
 #define apply_config(name, function_name)\
 	if (libinput_config.name##_configured) {\
-		libinput_real.function_name(\
+		libinput_config.function_name(\
 			device,\
 			libinput_config.name\
 		);\
 	}
 
-struct libinput_real libinput_real = {
-	.tap_set_enabled = NULL,
-	.tap_set_button_map = NULL,
-	.tap_set_drag_enabled = NULL,
-	.tap_set_drag_lock_enabled = NULL,
-	.scroll_set_button_lock_enabled = NULL,
-	.accel_set_speed = NULL,
-	.accel_set_profile = NULL,
-	.scroll_set_natural_scroll_enabled = NULL,
-	.left_handed_set = NULL,
-	.click_set_method = NULL,
-	.middle_emulation_set_enabled = NULL,
-	.scroll_set_method = NULL,
-	.scroll_set_button = NULL,
-	.dwt_set_enabled = NULL,
-	.dwtp_set_enabled = NULL
+struct libinput_config libinput_config = {
+	.configured = false,
+	
+	.override_compositor = false,
+	
+	config_option(tap, tap_set_enabled),
+	config_option(tap_button_map, tap_set_button_map),
+	config_option(drag, tap_set_drag_enabled),
+	config_option(drag_lock, tap_set_drag_lock_enabled),
+	config_option(scroll_button_lock, scroll_set_button_lock_enabled),
+	config_option(accel_speed, accel_set_speed),
+	config_option(accel_profile, accel_set_profile),
+	config_option(natural_scroll, scroll_set_natural_scroll_enabled),
+	config_option(left_handed, left_handed_set),
+	config_option(click_method, click_set_method),
+	config_option(middle_emulation, middle_emulation_set_enabled),
+	config_option(scroll_method, scroll_set_method),
+	config_option(scroll_button, scroll_set_button),
+	config_option(dwt, dwt_set_enabled),
+	config_option(dwtp, dwtp_set_enabled),
+	
+	.scroll_factor_x = 1,
+	.scroll_factor_y = 1,
+	
+	.discrete_scroll_factor_x = 1,
+	.discrete_scroll_factor_y = 1,
+	
+	.speed_x = 1,
+	.speed_y = 1,
+	
+	.gesture_speed_x = 1,
+	.gesture_speed_y = 1
 };
 
 void libinput_real_init(void) {
-	libinput_real = (struct libinput_real) {
-		load_function(tap_set_enabled),
-		load_function(tap_set_button_map),
-		load_function(tap_set_drag_enabled),
-		load_function(tap_set_drag_lock_enabled),
-		load_function(scroll_set_button_lock_enabled),
-		load_function(accel_set_speed),
-		load_function(accel_set_profile),
-		load_function(scroll_set_natural_scroll_enabled),
-		load_function(left_handed_set),
-		load_function(click_set_method),
-		load_function(middle_emulation_set_enabled),
-		load_function(scroll_set_method),
-		load_function(scroll_set_button),
-		load_function(dwt_set_enabled),
-		load_function(dwtp_set_enabled)
-	};
+	load_function(tap_set_enabled);
+	load_function(tap_set_button_map);
+	load_function(tap_set_drag_enabled);
+	load_function(tap_set_drag_lock_enabled);
+	load_function(scroll_set_button_lock_enabled);
+	load_function(accel_set_speed);
+	load_function(accel_set_profile);
+	load_function(scroll_set_natural_scroll_enabled);
+	load_function(left_handed_set);
+	load_function(click_set_method);
+	load_function(middle_emulation_set_enabled);
+	load_function(scroll_set_method);
+	load_function(scroll_set_button);
+	load_function(dwt_set_enabled);
+	load_function(dwtp_set_enabled);
 }
 
 replace_function(tap_set_enabled, tap, elc(tap_state));
