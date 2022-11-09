@@ -45,7 +45,7 @@ struct libinput_config libinput_config = {
 	config_option(tap_button_map, tap_set_button_map),
 	config_option(drag, tap_set_drag_enabled),
 	config_option(drag_lock, tap_set_drag_lock_enabled),
-	config_option(scroll_button_lock, scroll_set_button_lock_enabled),
+	config_option(scroll_button_lock, scroll_set_button_lock),
 	config_option(accel_speed, accel_set_speed),
 	config_option(accel_profile, accel_set_profile),
 	config_option(natural_scroll, scroll_set_natural_scroll_enabled),
@@ -75,7 +75,7 @@ void libinput_real_init(void) {
 	load_function(tap_set_button_map);
 	load_function(tap_set_drag_enabled);
 	load_function(tap_set_drag_lock_enabled);
-	load_function(scroll_set_button_lock_enabled);
+	load_function(scroll_set_button_lock);
 	load_function(accel_set_speed);
 	load_function(accel_set_profile);
 	load_function(scroll_set_natural_scroll_enabled);
@@ -92,7 +92,7 @@ replace_function(tap_set_enabled, tap, elc(tap_state));
 replace_function(tap_set_button_map, tap_button_map, elc(tap_button_map));
 replace_function(tap_set_drag_enabled, drag, elc(drag_state));
 replace_function(tap_set_drag_lock_enabled, drag_lock, elc(drag_lock_state));
-replace_function(scroll_set_button_lock_enabled, scroll_button_lock, elc(scroll_button_lock_state));
+replace_function(scroll_set_button_lock, scroll_button_lock, elc(scroll_button_lock_state));
 replace_function(accel_set_speed, accel_speed, double);
 replace_function(accel_set_profile, accel_profile, elc(accel_profile));
 replace_function(scroll_set_natural_scroll_enabled, natural_scroll, int);
@@ -111,7 +111,7 @@ void libinput_config_device(struct libinput_device *device) {
 	apply_config(tap_button_map, tap_set_button_map);
 	apply_config(drag, tap_set_drag_enabled);
 	apply_config(drag_lock, tap_set_drag_lock_enabled);
-	apply_config(scroll_button_lock, scroll_set_button_lock_enabled);
+	apply_config(scroll_button_lock, scroll_set_button_lock);
 	apply_config(accel_speed, accel_set_speed);
 	apply_config(accel_profile, accel_set_profile);
 	apply_config(natural_scroll, scroll_set_natural_scroll_enabled);

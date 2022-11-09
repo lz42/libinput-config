@@ -44,7 +44,7 @@ struct libinput_config {
 	config_option(elc(tap_button_map), tap_button_map, tap_set_button_map);
 	config_option(elc(drag_state), drag, tap_set_drag_enabled);
 	config_option(elc(drag_lock_state), drag_lock, tap_set_drag_lock_enabled);
-	config_option(elc(scroll_button_lock_state), scroll_button_lock, scroll_set_button_lock_enabled);
+	config_option(elc(scroll_button_lock_state), scroll_button_lock, scroll_set_button_lock);
 	config_option(double, accel_speed, accel_set_speed);
 	config_option(elc(accel_profile), accel_profile, accel_set_profile);
 	config_option(bool, natural_scroll, scroll_set_natural_scroll_enabled);
